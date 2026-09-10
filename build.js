@@ -14,6 +14,8 @@ const SRC = path.join(ROOT, 'src');
 const DATA = path.join(ROOT, 'data');
 const OUT_DIR = path.join(ROOT, 'dist');
 const OUT_FILE = path.join(OUT_DIR, 'peloponnes-guide.html');
+const PAGES_DIR = path.join(ROOT, 'docs');
+const PAGES_FILE = path.join(PAGES_DIR, 'index.html');
 
 const SOFT_LIMIT_BYTES = 3 * 1024 * 1024;
 const HARD_LIMIT_BYTES = 5 * 1024 * 1024;
@@ -103,9 +105,17 @@ function build() {
   if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.writeFileSync(OUT_FILE, out, 'utf8');
 
+  // Zusaetzliche Kopie fuer GitHub Pages (iPad kann dist/*.html nicht per
+  // file:// mit aktivem JavaScript oeffnen -- Quick Look deaktiviert JS fuer
+  // lokale HTML-Dateien). Gleicher Inhalt, nur als Hosting-Ziel unter /docs,
+  // da GitHub Pages als Branch-Quelle nur "/" oder "/docs" erlaubt.
+  if (!fs.existsSync(PAGES_DIR)) fs.mkdirSync(PAGES_DIR, { recursive: true });
+  fs.writeFileSync(PAGES_FILE, out, 'utf8');
+
   const bytes = Buffer.byteLength(out, 'utf8');
   const mb = (bytes / (1024 * 1024)).toFixed(2);
   console.log(`\nGeschrieben: ${path.relative(ROOT, OUT_FILE)} (${mb} MB)`);
+  console.log(`Geschrieben: ${path.relative(ROOT, PAGES_FILE)} (GitHub-Pages-Kopie)`);
   if (bytes > HARD_LIMIT_BYTES) {
     throw new Error(`Dateigroesse ${mb} MB ueberschreitet das harte Limit von 5 MB.`);
   }
