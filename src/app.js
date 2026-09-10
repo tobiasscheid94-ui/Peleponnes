@@ -5,6 +5,27 @@
 // Ohne injizierte Daten (lokale Entwicklung von src/index.html) greift der
 // Dummy-Datensatz unten.
 
+// Diagnose-Fallback: manche eingebetteten Vorschauen (Dateien-App Quick Look,
+// Chat-Dateivorschauen) rendern die Seite in restriktiveren WebView-Kontexten.
+// Falls irgendwo ein unbehandelter Fehler auftritt, wird er sichtbar auf der
+// Seite angezeigt statt stumm zu einer leeren Karte zu fuehren.
+(function () {
+  function showFatalError(message) {
+    var el = document.getElementById('map');
+    if (!el) return;
+    el.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;' +
+      'justify-content:center;padding:24px;background:#f4f1ea;color:#a0442c;' +
+      'font-family:-apple-system,sans-serif;font-size:14px;text-align:center;">' +
+      'Fehler beim Laden der Karte:<br>' + String(message).replace(/</g, '&lt;') + '</div>';
+  }
+  window.addEventListener('error', function (ev) {
+    showFatalError((ev && ev.message) || 'Unbekannter Fehler');
+  });
+  window.addEventListener('unhandledrejection', function (ev) {
+    showFatalError((ev && ev.reason && ev.reason.message) || 'Unbekannte Promise-Ablehnung');
+  });
+})();
+
 // BUILD:STRIP-START — von build.js aus dist/ entfernt, da nur fuer lokale UI-Entwicklung ohne echten Content.
 if (typeof window.PELOPONNES_DATA === 'undefined') {
   window.PELOPONNES_HABITATS = {
@@ -286,6 +307,14 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
 
   var map = L.map('map', { zoomControl: true, attributionControl: true, tap: true });
   map.fitBounds(bounds);
+
+  // Manche eingebetteten WebViews (Quick-Look-Vorschauen, Chat-Dateivorschauen)
+  // liefern beim ersten Layout noch keine endgueltige Containergroesse.
+  // invalidateSize() nach Resize/Orientierungswechsel/kurzer Verzoegerung
+  // verhindert eine leer bleibende Karte in solchen Faellen.
+  setTimeout(function () { map.invalidateSize(); }, 200);
+  window.addEventListener('resize', function () { map.invalidateSize(); });
+  window.addEventListener('orientationchange', function () { setTimeout(function () { map.invalidateSize(); }, 200); });
 
   var onlineLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
