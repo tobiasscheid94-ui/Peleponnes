@@ -1,8 +1,26 @@
 # Peloponnes Reiseguide
 
-Interaktiver, karten-basierter Reiseguide für die Peloponnes. Läuft als einzelne
-HTML-Datei offline aus der iPad-Dateien-App (`file://`), ohne Server, ohne
-Laufzeit-Abhängigkeiten. Details siehe Projekt-Brief.
+Interaktiver, karten-basierter Reiseguide für die Peloponnes. Als einzelne,
+vollständig eigenständige HTML-Datei gebaut (kein Server, keine
+Laufzeit-Abhängigkeiten, alle Daten inline). Details siehe Projekt-Brief.
+
+**Live:** https://peleponnes.vercel.app/
+
+## Verteilung: Vercel statt reinem `file://`
+
+Ursprünglich als `file://`-Datei aus der iPad-Dateien-App vorgesehen (Ziel:
+kein Server nötig). In der Praxis blockiert iPadOS das: Tippen auf eine
+lokale HTML-Datei öffnet die Quick-Look-Vorschau, die JavaScript für lokale
+Dokumente grundsätzlich deaktiviert (mit einer isolierten Minimal-Testdatei
+verifiziert), und modernes Safari bietet für lokale Dateien kein "Öffnen
+in..." mehr an. Die App-Logik selbst ist davon nicht betroffen — nur der
+Distributionsweg funktioniert so nicht mehr zuverlässig auf dem Zielgerät.
+
+Deshalb wird zusätzlich zur `dist/peloponnes-guide.html` (weiterhin die
+kanonische, eigenständige Projekt-Ausgabe) eine identische Kopie nach
+`docs/index.html` geschrieben und über GitHub Pages/Vercel als echte
+`https://`-Seite ausgeliefert. `vercel.json` sorgt dafür, dass ein an dieses
+Repo gekoppeltes Vercel-Projekt bei jedem Push automatisch neu deployed.
 
 ## Entwicklung
 
