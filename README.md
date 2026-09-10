@@ -23,12 +23,27 @@ Prüft alle Einträge unter `data/*.json` gegen `data/schema.json`
 (Pflichtfelder, Werte-Bereiche, Textlängen, Koordinaten-Bounding-Box,
 doppelte IDs, Habitat-konsistente Artenlisten).
 
-## Build (ab Phase 2)
+## Build
 
 ```
 node build.js
 ```
 
-Erzeugt `dist/peloponnes-guide.html` — eine einzelne, vollständig
-eigenständige Datei mit allen Assets inline (kein Netzwerk-Request zum
-Start nötig).
+Validiert zuerst alle Inhalte (`tools/validate.js`) und erzeugt dann
+`dist/peloponnes-guide.html` — eine einzelne, vollständig eigenständige
+Datei mit CSS/JS/Content/Basemap inline (kein Netzwerk-Request zum Start
+nötig). Bricht bei Validierungsfehlern oder > 5 MB Dateigröße ab.
+
+## Offline-Basiskarte (`geo/basemap.geojson`)
+
+Abweichend vom ursprünglichen Plan (Natural Earth + Geofabrik-OSM-Extract,
+manuell per `mapshaper` verarbeitet) stammt die Landfläche/Küstenlinie der
+Offline-Karte aus dem npm-Paket `@geo-maps/earth-lands-1km`
+(simonepri/geo-maps), da `naturalearthdata.com` und `download.geofabrik.de`
+im Build-Netzwerk dieser Sitzung blockiert waren. Die Daten sind ihrerseits
+aus OpenStreetMap abgeleitet (ODbL, Attribution im UI vorhanden), auf die
+Peloponnes-Bounding-Box zugeschnitten (`mapshaper -clip`) und liegen in
+~1 km Auflösung vor — als grober Offline-Fallback ausreichend, aber ohne
+Straßen (Geofabrik-Straßendaten waren nicht erreichbar). Bei Bedarf lässt
+sich `geo/basemap.geojson` später gegen eine feinere/andere Quelle
+austauschen, ohne `build.js` anzupassen.

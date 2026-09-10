@@ -5,7 +5,7 @@
 // Ohne injizierte Daten (lokale Entwicklung von src/index.html) greift der
 // Dummy-Datensatz unten.
 
-// ---------- Dummy-Daten (nur fuer lokale UI-Entwicklung, kein echter Content) ----------
+// BUILD:STRIP-START — von build.js aus dist/ entfernt, da nur fuer lokale UI-Entwicklung ohne echten Content.
 if (typeof window.PELOPONNES_DATA === 'undefined') {
   window.PELOPONNES_HABITATS = {
     habitats: {
@@ -111,6 +111,7 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
       bestTime: 'Platzhalter.', sunsetSunrise: null }
   ];
 }
+// BUILD:STRIP-END
 
 (function () {
   'use strict';
@@ -292,12 +293,18 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   });
 
   var offlineLayer = L.layerGroup(); // Phase 2 füllt dies aus geo/basemap.geojson.
+  var offlineAttribution = 'Offline-Basiskarte: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende (ODbL)';
   if (window.PELOPONNES_BASEMAP) {
     try {
+      var basemapProps = window.PELOPONNES_BASEMAP.properties || {};
+      if (basemapProps.source) {
+        offlineAttribution = 'Offline-Basiskarte: ' + basemapProps.source +
+          (basemapProps.license ? ' (' + basemapProps.license + ')' : '');
+      }
       L.geoJSON(window.PELOPONNES_BASEMAP, {
         style: { color: '#8a6d3b', weight: 1, fillColor: '#e8e0cf', fillOpacity: 1 }
       }).addTo(offlineLayer);
-    } catch (e) { /* Basemap folgt in Phase 2 */ }
+    } catch (e) { /* Basemap fehlt oder ist fehlerhaft -- Offline-Layer bleibt dann leer. */ }
   }
 
   var offlineBanner = document.getElementById('offline-banner');
@@ -309,12 +316,14 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     usingOffline = true;
     if (map.hasLayer(onlineLayer)) map.removeLayer(onlineLayer);
     if (!map.hasLayer(offlineLayer)) offlineLayer.addTo(map);
+    map.attributionControl.addAttribution(offlineAttribution);
     if (offlineBanner) offlineBanner.hidden = false;
   }
   function activateOnline() {
     usingOffline = false;
     if (map.hasLayer(offlineLayer)) map.removeLayer(offlineLayer);
     if (!map.hasLayer(onlineLayer)) onlineLayer.addTo(map);
+    map.attributionControl.removeAttribution(offlineAttribution);
     if (offlineBanner) offlineBanner.hidden = true;
   }
 
