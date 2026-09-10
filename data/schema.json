@@ -1,0 +1,230 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://peloponnes-guide.local/schema.json",
+  "title": "Peloponnes-Guide Eintrag",
+  "description": "Referenzschema fuer Eintraege in /data/*.json. tools/validate.js implementiert diese Regeln direkt in JS (kein generischer JSON-Schema-Interpreter, um ohne npm-Abhaengigkeit auszukommen); dieses Dokument ist die verbindliche Referenz, an der validate.js sich orientiert.",
+
+  "definitions": {
+    "region": {
+      "type": "string",
+      "enum": ["lakonien", "messenien", "arkadien", "argolis", "korinthia", "achaia", "ilia"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["beach", "site", "town", "monastery_castle", "hike", "viewpoint"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "coordSource": {
+      "type": "string",
+      "enum": ["exact", "approx"]
+    },
+    "touristTrapRisk": {
+      "type": "object",
+      "required": ["level", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "level": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "entryBase": {
+      "type": "object",
+      "required": [
+        "id", "name", "nameGr", "type", "region", "coords", "coordSource",
+        "summary", "timeNeeded", "touristTrapRisk", "nearby", "tags",
+        "confidence", "needsVerification"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "nameGr": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/definitions/type" },
+        "region": { "$ref": "#/definitions/region" },
+        "coords": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "[lat, lon]. Muss innerhalb der Peloponnes-Bounding-Box liegen: lon 20.9-23.4, lat 36.3-38.4."
+        },
+        "coordSource": { "$ref": "#/definitions/coordSource" },
+        "summary": { "type": "string", "maxLength": 200 },
+        "timeNeeded": { "type": "string", "minLength": 1 },
+        "touristTrapRisk": { "$ref": "#/definitions/touristTrapRisk" },
+        "nearby": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "$ref": "#/definitions/confidence" },
+        "needsVerification": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "crowding": {
+      "type": "object",
+      "required": ["peakSeason", "shoulderSeason", "timeOfDayNote"],
+      "properties": {
+        "peakSeason": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "shoulderSeason": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "timeOfDayNote": { "type": ["string", "null"] }
+      }
+    },
+    "snorkeling": {
+      "type": "object",
+      "required": ["rating", "habitat", "speciesLikely", "speciesCaution"],
+      "properties": {
+        "rating": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "habitat": {
+          "type": "string",
+          "description": "Muss einem Schluessel aus /data/habitats.json entsprechen.",
+          "enum": ["sandflach", "felskueste", "posidonia_wiese", "mischbucht", "steilkueste_blockfeld"]
+        },
+        "visibility": { "type": ["string", "null"] },
+        "speciesLikely": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Wird aus dem habitat-Profil in habitats.json abgeleitet, nicht pro Strand frei erfunden."
+        },
+        "speciesCaution": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "facilities": {
+      "type": "object",
+      "required": ["sunbeds", "taverna", "wc", "freshwater", "parking"],
+      "properties": {
+        "sunbeds": { "type": "string", "enum": ["keine", "wenige", "Reihenbetrieb"] },
+        "taverna": { "type": "string", "enum": ["keine", "eine am Zugang", "mehrere"] },
+        "wc": { "type": ["boolean", "null"] },
+        "freshwater": { "type": ["boolean", "null"] },
+        "parking": { "type": ["string", "null"] }
+      }
+    },
+    "access": {
+      "type": "object",
+      "required": ["mode", "difficulty"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["direkt am Parkplatz", "Fussweg", "Wanderung", "4x4", "Boot"] },
+        "minutesFromParking": { "type": ["integer", "null"], "minimum": 0 },
+        "roadQuality": { "type": ["string", "null"] },
+        "difficulty": { "type": "string", "enum": ["leicht", "mittel", "schwer"] }
+      }
+    },
+    "beachExtra": {
+      "type": "object",
+      "required": [
+        "surface", "seabed", "entry", "barefootFriendly", "crowding", "shade",
+        "windExposure", "hazards", "snorkeling", "facilities", "access",
+        "nudistTolerated", "bestTime"
+      ],
+      "properties": {
+        "surface": { "type": "string", "enum": ["feiner Sand", "grober Sand", "Kies", "Kiesel", "Fels", "Mix"] },
+        "seabed": { "type": "string", "enum": ["Sand", "Kies", "Fels", "Posidonia-Wiese", "Mix"] },
+        "entry": { "type": "string", "enum": ["flach abfallend", "steil abfallend", "Felseinstieg", "Leiter/Steg"] },
+        "barefootFriendly": { "type": ["boolean", "null"] },
+        "crowding": { "$ref": "#/definitions/crowding" },
+        "shade": { "type": "string" },
+        "windExposure": { "type": "string" },
+        "hazards": { "type": "array", "items": { "type": "string" } },
+        "snorkeling": { "$ref": "#/definitions/snorkeling" },
+        "facilities": { "$ref": "#/definitions/facilities" },
+        "access": { "$ref": "#/definitions/access" },
+        "nudistTolerated": { "type": ["boolean", "null"] },
+        "bestTime": { "type": "string" },
+        "history": { "type": ["string", "null"] }
+      }
+    },
+    "siteExtra": {
+      "type": "object",
+      "required": ["epoch", "dating", "whyItMatters", "whatYouSee", "terrain", "shadeAndHeat", "combineWith", "ticketInfo"],
+      "properties": {
+        "epoch": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["mykenisch", "klassisch", "hellenistisch", "roemisch", "byzantinisch", "fraenkisch", "venezianisch", "osmanisch"]
+          }
+        },
+        "dating": { "type": ["string", "null"] },
+        "whyItMatters": { "type": "string", "description": "150-300 Woerter." },
+        "whatYouSee": { "type": "string", "description": "80-150 Woerter." },
+        "walkthrough": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "required": ["stop", "note"],
+            "properties": { "stop": { "type": "string" }, "note": { "type": "string" } }
+          }
+        },
+        "museumOnSite": { "type": ["boolean", "null"] },
+        "terrain": { "type": "string" },
+        "shadeAndHeat": { "type": "string" },
+        "misconceptions": { "type": ["string", "null"] },
+        "readingHooks": { "type": ["string", "null"] },
+        "combineWith": { "type": "array", "items": { "type": "string" } },
+        "ticketInfo": { "type": "null", "description": "Bleibt null bis manuell verifiziert (Abschnitt 5)." }
+      }
+    },
+    "townExtra": {
+      "type": "object",
+      "required": ["character", "historyTimeline", "whatToDo", "parking", "foodScene"],
+      "properties": {
+        "character": { "type": "string" },
+        "historyTimeline": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["period", "note"],
+            "properties": { "period": { "type": "string" }, "note": { "type": "string" } }
+          }
+        },
+        "whatToDo": { "type": "array", "items": { "type": "string" } },
+        "parking": { "type": ["string", "null"] },
+        "foodScene": { "type": "string", "description": "Struktur/Kriterien, keine erfundenen Lokalnamen." }
+      }
+    },
+    "monasteryCastleExtra": {
+      "type": "object",
+      "description": "Im Brief nicht im Detail spezifiziert; analog zu siteExtra, ohne ticketInfo-Pflicht.",
+      "required": ["epoch", "whyItMatters", "whatYouSee", "terrain"],
+      "properties": {
+        "epoch": { "type": "array", "items": { "type": "string" } },
+        "dating": { "type": ["string", "null"] },
+        "whyItMatters": { "type": "string" },
+        "whatYouSee": { "type": "string" },
+        "terrain": { "type": "string" },
+        "shadeAndHeat": { "type": ["string", "null"] },
+        "combineWith": { "type": ["array", "null"], "items": { "type": "string" } },
+        "ticketInfo": { "type": "null" }
+      }
+    },
+    "hikeExtra": {
+      "type": "object",
+      "description": "Im Brief nicht im Detail spezifiziert; eigene, konservative Feldauswahl.",
+      "required": ["difficulty", "distanceKm", "durationHours", "terrain"],
+      "properties": {
+        "difficulty": { "type": "string", "enum": ["leicht", "mittel", "schwer"] },
+        "distanceKm": { "type": ["number", "null"] },
+        "durationHours": { "type": ["string", "null"] },
+        "elevationGainM": { "type": ["integer", "null"] },
+        "terrain": { "type": "string" },
+        "waymarking": { "type": ["string", "null"] },
+        "waterAvailable": { "type": ["boolean", "null"] },
+        "bestTime": { "type": ["string", "null"] }
+      }
+    },
+    "viewpointExtra": {
+      "type": "object",
+      "description": "Im Brief nicht im Detail spezifiziert; eigene, konservative Feldauswahl.",
+      "required": ["access", "bestTime"],
+      "properties": {
+        "access": { "$ref": "#/definitions/access" },
+        "bestTime": { "type": "string" },
+        "sunsetSunrise": { "type": ["string", "null"] }
+      }
+    }
+  },
+
+  "type": "object",
+  "allOf": [{ "$ref": "#/definitions/entryBase" }],
+  "boundingBox": { "minLon": 20.9, "minLat": 36.3, "maxLon": 23.4, "maxLat": 38.4 }
+}

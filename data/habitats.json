@@ -1,0 +1,79 @@
+{
+  "_comment": "Habitat-Profile fuer Schnorchel-Artenlisten (Abschnitt 4.1 des Briefs). Eintraege referenzieren einen dieser Schluessel unter snorkeling.habitat statt Arten pro Strand frei zu erfinden. Alle Angaben sind habitat-typisch fuer das ionische/aegaeische Mittelmeer, KEINE Sichtungsgarantie fuer einen bestimmten Ort oder Tag.",
+  "disclaimerUI": "Habitat-typische Arten, keine Sichtungsgarantie.",
+  "habitats": {
+    "sandflach": {
+      "name": "Sandflach",
+      "description": "Flach abfallender, sandiger Meeresboden ohne nennenswerten Bewuchs. Geringste Artenvielfalt, aber gut fuer Anfaenger und Kinder.",
+      "speciesLikely": [
+        "Ährenfische (Atherina spp.)",
+        "Meeräschen (Mugilidae)",
+        "Sandgrundeln",
+        "junge Plattfische"
+      ],
+      "speciesCaution": [
+        "Petermännchen (Trachinus draco) – vergraben sich im Sand, schmerzhafter Stich",
+        "gelegentlich Stechrochen im Flachwasser"
+      ]
+    },
+    "felskueste": {
+      "name": "Felsküste",
+      "description": "Felsiger Untergrund mit Spalten und Höhlen, meist in Ufernähe. Deutlich höhere Artenvielfalt als Sandflächen.",
+      "speciesLikely": [
+        "Geißbrassen (Diplodus spp.)",
+        "Lippfische (Labridae, u.a. Meerjunker)",
+        "Muränen (in Spalten, meist tagsüber verborgen)",
+        "Einsiedlerkrebse"
+      ],
+      "speciesCaution": [
+        "Drachenkopf (Scorpaena spp.) – gut getarnt, giftige Stacheln",
+        "Seeigel (Paracentrotus lividus) in Spalten und Randbereichen",
+        "Feuerwurm an Felsunterseiten"
+      ]
+    },
+    "posidonia_wiese": {
+      "name": "Posidonia-Wiese",
+      "description": "Wiesen des Neptungrases (Posidonia oceanica) – Endemit des Mittelmeers, wichtiger Lebensraum und Kinderstube für Jungfische. Nicht betreten, nicht als toten Seetang missverstehen.",
+      "speciesLikely": [
+        "Seenadeln (Syngnathus spp.)",
+        "Jungfische von Brassen und Meerbarben als Aufwuchsgebiet",
+        "Seegurken",
+        "gelegentlich Seepferdchen (selten, nicht garantiert)"
+      ],
+      "speciesCaution": [
+        "Seeigel im Übergang zu Felsbereichen",
+        "Quallen können sich bei Strömung in Wiesenrändern sammeln"
+      ]
+    },
+    "mischbucht": {
+      "name": "Mischbucht",
+      "description": "Übergangszone aus Sand- und Felsanteilen, oft die artenreichste Kombination in Strandnähe.",
+      "speciesLikely": [
+        "Geißbrassen (Diplodus spp.)",
+        "Meeräschen (Mugilidae)",
+        "Oktopus (Octopus vulgaris)",
+        "Lippfische"
+      ],
+      "speciesCaution": [
+        "Petermännchen im Sandanteil",
+        "Seeigel an den Felsrändern",
+        "Feuerwurm an Steinen"
+      ]
+    },
+    "steilkueste_blockfeld": {
+      "name": "Steilküste / Blockfeld",
+      "description": "Tiefer abfallendes Gelände mit großen Blöcken oder Steilwand. Meist klareres Wasser, aber anspruchsvoller Einstieg.",
+      "speciesLikely": [
+        "junge Zackenbarsche (in tieferen Verstecken)",
+        "Muränen",
+        "Geißbrassen",
+        "größere Schwärme Meerbrassen in der Wassersäule"
+      ],
+      "speciesCaution": [
+        "Drachenkopf zwischen Blöcken",
+        "Seeigel dicht an Blockunterseiten",
+        "Strömung an exponierten Stellen möglich"
+      ]
+    }
+  }
+}

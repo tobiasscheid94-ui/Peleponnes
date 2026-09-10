@@ -1,0 +1,82 @@
+[
+  {
+    "id": "mykene",
+    "name": "Mykene",
+    "nameGr": "Μυκήνες",
+    "type": "site",
+    "region": "argolis",
+    "coords": [37.7307, 22.7565],
+    "coordSource": "exact",
+    "summary": "Bronzezeitliche Palastburg der homerischen Sagenwelt: Löwentor, Zyklopenmauern und Grabkreis A – Ursprungsort des Begriffs 'mykenische Kultur'.",
+    "timeNeeded": "1,5–2,5 Std.",
+    "touristTrapRisk": {
+      "level": 3,
+      "note": "Stark frequentiert, vor allem vormittags mit Busgruppen aus Nafplio und Athen; der UNESCO-Welterbestatus zieht Massen an, aber die Substanz vor Ort ist real und nicht künstlich überinszeniert."
+    },
+    "nearby": [],
+    "tags": ["mykenisch", "unesco", "wanderung-kurz", "museum", "ilias"],
+    "confidence": "high",
+    "needsVerification": [
+      "Aktuelle Öffnungszeiten",
+      "Aktueller Eintrittspreis",
+      "Kombiticket-Regelung mit Epidauros/Tiryns"
+    ],
+    "epoch": ["mykenisch"],
+    "dating": "Palastzeit ca. 1350–1200 v. Chr., Ende der Palastfunktion um 1200–1150 v. Chr. im Zuge des allgemeinen Zusammenbruchs der mykenischen Palastkultur am Ende der Bronzezeit.",
+    "whyItMatters": "Mykene war im 2. Jahrtausend v. Chr. das bedeutendste Machtzentrum der mykenischen Kultur, jener spätbronzezeitlichen Palastzivilisation, die dem gesamten Zeitabschnitt ihren modernen Namen gab. Von hier aus kontrollierte eine kriegerische Elite weite Teile der Argolis, handelte mit Ägypten und dem Vorderen Orient und hinterließ mit den Zyklopenmauern, dem Löwentor und den Kuppelgräbern Bauwerke, die noch den Griechen der klassischen Zeit als Werk von Riesen erschienen – daher der Beiname 'zyklopisch'. In der homerischen Überlieferung gilt Mykene als Sitz des Agamemnon, des Anführers der Achaier vor Troja, auch wenn sich diese Zuschreibung archäologisch nicht beweisen lässt. Heinrich Schliemanns Ausgrabungen ab 1876 machten den Ort schlagartig weltberühmt und begründeten die moderne Erforschung der griechischen Bronzezeit überhaupt. Der Niedergang der Palastkultur um 1200–1150 v. Chr., vermutlich im Zusammenhang mit dem breiteren Zusammenbruch der östlichen Mittelmeerwelt am Ende der Bronzezeit, markiert zugleich den Übergang in die sogenannte 'dunkle Zeit' Griechenlands vor der archaischen Epoche. Wer die Grundlagen der griechischen Geschichte verstehen will, kommt an Mykene nicht vorbei.",
+    "whatYouSee": "Vom Eingang führt der Weg zunächst zum imposanten Löwentor, dem Haupttor der zyklopischen Ringmauer, mit dem berühmten Wappenrelief zweier Löwinnen über dem Sturz. Direkt dahinter liegt Grabkreis A mit nachgebauten Grabmarkierungen – die Originalfunde, darunter die sogenannte Agamemnon-Maske, sind im Archäologischen Nationalmuseum Athen zu sehen. Der Weg steigt weiter zum Palastbereich auf der Kuppe, von dem heute nur noch Fundamente und Mauerzüge des Megarons erhalten sind, keine aufgehenden Wände. Unterhalb der Akropolis liegt freistehend das Schatzhaus des Atreus, ein vollständig erhaltenes Kuppelgrab mit monumentalem Zugang – für viele Besucher der eindrücklichste Einzelbau der gesamten Anlage.",
+    "walkthrough": [
+      {"stop": "Löwentor", "note": "Haupttor der Ringmauer mit dem Wappenrelief zweier Löwinnen; Symbolbild der mykenischen Kultur."},
+      {"stop": "Grabkreis A", "note": "Königlicher Grabbezirk aus dem 16. Jh. v. Chr.; Originalfunde heute in Athen."},
+      {"stop": "Palastbereich / Megaron", "note": "Fundamente des Thronsaals auf der Kuppe; freier Blick über die Argolis-Ebene."},
+      {"stop": "Schatzhaus des Atreus", "note": "Freistehendes Kuppelgrab (Tholos) mit monumentalem Dromos, separat vom Hauptgelände."}
+    ],
+    "museumOnSite": true,
+    "terrain": "Unebenes antikes Pflaster und Fels, ca. 60–80 Höhenmeter bis zum Palastbereich, teils steil und bei Nässe rutschig.",
+    "shadeAndHeat": "Fast durchgehend schattenlos auf exponiertem Hügel. Besuch früh vormittags oder ab späterem Nachmittag deutlich erträglicher.",
+    "misconceptions": "Die von Schliemann gefundene sogenannte 'Maske des Agamemnon' stammt aus einer Bestattung, die etwa 300 Jahre vor der sagenhaften Zeit des Trojanischen Krieges datiert – sie kann also nicht Agamemnons Totenmaske sein, wird in populären Darstellungen aber oft so präsentiert.",
+    "readingHooks": "Homers Ilias (Agamemnon als Heerführer der Achaier), Pausanias' Beschreibung Griechenlands (Buch II), sowie Heinrich Schliemanns Ausgrabungsberichte von 1876.",
+    "combineWith": ["nafplio"],
+    "ticketInfo": null
+  },
+  {
+    "id": "nafplio",
+    "name": "Nafplio",
+    "nameGr": "Ναύπλιο",
+    "type": "town",
+    "region": "argolis",
+    "coords": [37.5673, 22.8004],
+    "coordSource": "exact",
+    "summary": "Erste Hauptstadt des modernen Griechenland (1829–1834); venezianisch-osmanische Altstadt zwischen zwei Festungen und dem Meer, heute beliebtes Wochenendziel für Athener.",
+    "timeNeeded": "Halber bis ganzer Tag",
+    "touristTrapRisk": {
+      "level": 4,
+      "note": "Die Altstadt ist bewusst auf Flaniertourismus ausgelegt und an Wochenenden sowie Feiertagen stark überlaufen; abseits der Hauptgassen und außerhalb der Stoßzeiten bleibt die Bausubstanz aber genuin und die Stadt bleibt liebenswert."
+    },
+    "nearby": ["mykene"],
+    "tags": ["venezianisch", "festung", "hafenstadt", "spazieren", "abendstimmung"],
+    "confidence": "medium",
+    "needsVerification": [
+      "Aktuelle Parkregelung und Gebühren in der Altstadt",
+      "Aktuelle Öffnungszeiten Festung Palamidi",
+      "Aktuelle Bootsverbindung zur Bourtzi-Insel"
+    ],
+    "character": "Nafplio wirkt auf den ersten Blick wie eine kuratierte Kulisse – gepflasterte Gassen, neoklassizistische Fassaden, zwei Festungen und eine Festungsinsel in der Bucht. Anders als viele durchtouristifizierte Orte ist die Bausubstanz aber real gewachsen: Die Stadt war tatsächlich Hauptstadt, Garnisonsstadt und Handelshafen, kein nachträglich errichtetes Ensemble. Der Tourismus konzentriert sich stark auf einen Kern um die Uferpromenade und den Syntagma-Platz; wenige Gassen weiter wird es spürbar ruhiger und alltäglicher.",
+    "historyTimeline": [
+      {"period": "Erste venezianische Periode, 1389–1540", "note": "Ausbau der Hafenbefestigung und der Akronafplia-Burg oberhalb der Altstadt."},
+      {"period": "Erste osmanische Periode, 1540–1686", "note": "Übernahme nach der osmanischen Eroberung der Stadt."},
+      {"period": "Zweite venezianische Periode, 1686–1715", "note": "Bau der Festung Palamidi, einer der größten venezianischen Festungsanlagen im östlichen Mittelmeer."},
+      {"period": "Zweite osmanische Periode, 1715–1822", "note": "Rückeroberung durch das Osmanische Reich."},
+      {"period": "Griechische Revolution und erste Hauptstadt, 1822–1834", "note": "Nach der Revolution wird Nafplio erste Hauptstadt des unabhängigen griechischen Staates, bevor die Hauptstadt 1834 nach Athen verlegt wird."}
+    ],
+    "whatToDo": [
+      "Aufstieg zur Festung Palamidi (mehrere hundert Stufen)",
+      "Spaziergang auf dem Küstenweg Arvanitia um die Akronafplia-Halbinsel",
+      "Bootsüberfahrt zur kleinen Festungsinsel Bourtzi in der Bucht",
+      "Bummel durch die Altstadtgassen rund um den Syntagma-Platz"
+    ],
+    "parking": "Die Altstadt ist zu großen Teilen Fußgängerzone; Parkmöglichkeiten bestehen am Hafen und an den Zufahrtsstraßen, in der Hochsaison ist es dort eng.",
+    "foodScene": "Dichte Taverna- und Café-Kulisse entlang der Uferpromenade und in der Altstadt. Die unmittelbar am Wasser sichtbaren Terrassen sind auf Laufkundschaft ausgerichtet; Lokale in den ruhigeren Seitengassen abseits der Hauptachse lohnen eher einen Blick auf die Karte, bevor man sich setzt.",
+    "timeNeeded": "Halber bis ganzer Tag"
+  }
+]

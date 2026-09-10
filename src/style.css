@@ -1,0 +1,54 @@
+:root {
+  color-scheme: light;
+  --font-stack: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --color-bg: #f4f1ea;
+  --color-text: #1c1b19;
+  --color-accent: #a0442c;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-stack);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background: #cfd8dc;
+}
+
+/* Leaflet attribution sits in the safe area on notched/rounded iPad corners. */
+.leaflet-control-attribution {
+  margin-bottom: var(--safe-bottom) !important;
+  margin-right: var(--safe-right) !important;
+  font-size: 11px;
+}
+
+.leaflet-top {
+  margin-top: calc(var(--safe-top) + 8px);
+}
+.leaflet-left {
+  margin-left: calc(var(--safe-left) + 8px);
+}
+.leaflet-right {
+  margin-right: calc(var(--safe-right) + 8px);
+}

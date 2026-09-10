@@ -1,0 +1,61 @@
+[
+  {
+    "id": "voidokilia",
+    "name": "Voidokilia",
+    "nameGr": "Βοϊδοκοιλιά",
+    "type": "beach",
+    "region": "messenien",
+    "coords": [36.9583, 21.6597],
+    "coordSource": "exact",
+    "summary": "Sichelförmige Sandbucht bei Pylos, geschützt durch die Gialova-Lagune; einer der fotogensten, aber auch meistbesuchtesten Strände der Peloponnes.",
+    "timeNeeded": "1–2 Std.",
+    "touristTrapRisk": {
+      "level": 4,
+      "note": "Erscheint in praktisch jedem Reiseführer und dauerhaft auf Instagram; im Hochsommer ab Vormittag stark überlaufen und der Parkplatz überlastet. Trotzdem kein künstlich inszenierter Ort – die Bucht liegt in einem Schutzgebiet ohne Strandbars oder Liegenreihen."
+    },
+    "nearby": [],
+    "tags": ["schnorcheln", "sonnenuntergang", "sandstrand", "naturschutz", "mykenisch"],
+    "confidence": "medium",
+    "needsVerification": [
+      "Parkgebühr/Kapazität am Zugang bei Palaiokastro",
+      "Aktuelle Zufahrtsbeschränkungen im Schutzgebiet",
+      "WC/Trinkwasser vor Ort",
+      "Toleranz gegenüber Nacktbaden"
+    ],
+    "surface": "feiner Sand",
+    "seabed": "Sand",
+    "entry": "flach abfallend",
+    "barefootFriendly": true,
+    "crowding": {
+      "peakSeason": 5,
+      "shoulderSeason": 2,
+      "timeOfDayNote": "Ab ca. 10 Uhr füllt sich der Parkplatz sichtbar; früh morgens oder ab spätem Nachmittag ist die Bucht deutlich ruhiger."
+    },
+    "shade": "kein Schatten",
+    "windExposure": "Durch die beidseitigen Landzungen weitgehend geschützt, meist ruhiges Wasser; bei starkem Wind aus Südwest dennoch spürbarer Wellengang.",
+    "hazards": ["kein Rettungsschwimmer", "Strömung im Übergang zur Gialova-Lagune bei Wind"],
+    "snorkeling": {
+      "rating": 2,
+      "habitat": "sandflach",
+      "visibility": "meist 5–10 m bei ruhiger See",
+      "speciesLikely": ["Ährenfische (Atherina spp.)", "Meeräschen (Mugilidae)"],
+      "speciesCaution": ["Petermännchen (Trachinus draco) – vergraben sich im Sand, schmerzhafter Stich"]
+    },
+    "facilities": {
+      "sunbeds": "keine",
+      "taverna": "keine",
+      "wc": null,
+      "freshwater": null,
+      "parking": "Unbefestigter Platz an der Zufahrt bei Palaiokastro; Kapazität und Gebührenstatus nicht verifiziert."
+    },
+    "access": {
+      "mode": "Fussweg",
+      "minutesFromParking": 5,
+      "roadQuality": "Zufahrt bis zum Parkplatz asphaltiert bzw. geschottert, letzter kurzer Abschnitt zu Fuß über einen Dünenpfad.",
+      "difficulty": "leicht"
+    },
+    "nudistTolerated": null,
+    "bestTime": "Früher Vormittag vor 10 Uhr oder später Nachmittag, um dem Hauptandrang der Tagesausflügler zu entgehen.",
+    "history": "Direkt oberhalb liegt die sogenannte Nestor-Höhle, die in der Antike mit dem Nestor der Ilias in Verbindung gebracht wurde, sowie die Ruine der Festung Palaiokastro (Alt-Navarino) auf dem Hügel über der Bucht."
+  }
+]
