@@ -10,6 +10,83 @@
 <body>
   <div id="map"></div>
 
+  <div class="toolbar">
+    <div class="search-wrap">
+      <input id="search-input" type="search" inputmode="search" placeholder="Suche nach Ort, Tag, Region…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button id="search-clear" class="search-clear" type="button" hidden aria-label="Suche löschen">✕</button>
+    </div>
+    <button id="filter-toggle" class="icon-btn" type="button" aria-label="Filter">
+      ▤<span id="filter-count" class="count-dot" hidden>0</span>
+    </button>
+    <button id="favorites-toggle" class="icon-btn" type="button" aria-label="Favoriten">★</button>
+  </div>
+
+  <div id="filter-panel" class="filter-panel" hidden>
+    <div class="filter-group">
+      <div class="filter-group__label">Typ</div>
+      <div id="chips-type" class="chip-row"></div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group__label">Region</div>
+      <div id="chips-region" class="chip-row"></div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group__label">Touristenfalle höchstens</div>
+      <div id="chips-trap" class="chip-row"></div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group__label">Tags</div>
+      <div id="chips-tags" class="chip-row"></div>
+    </div>
+    <button id="filter-reset" class="filter-panel__reset" type="button">Filter zurücksetzen</button>
+  </div>
+
+  <div class="fab-stack">
+    <button id="locate-btn" class="icon-btn" type="button" aria-label="Umkreis um meinen Standort" hidden>◎</button>
+    <button id="needs-verify-btn" class="icon-btn" type="button" aria-label="Zu prüfende Angaben">!</button>
+  </div>
+
+  <div id="offline-banner" class="offline-banner" hidden>Offline-Kartenbasis aktiv</div>
+
+  <div id="bottom-sheet" class="bottom-sheet" data-state="hidden">
+    <div id="bottom-sheet-handle" class="bottom-sheet__handle"></div>
+    <div class="bottom-sheet__header">
+      <div class="bottom-sheet__title-row">
+        <h2 id="sheet-name">
+          <span class="name-gr" id="sheet-name-gr"></span>
+        </h2>
+        <button id="sheet-fav" class="bottom-sheet__fav" type="button" aria-label="Favorit umschalten">☆</button>
+        <button id="sheet-close" class="bottom-sheet__close" type="button" aria-label="Schließen">✕</button>
+      </div>
+      <div id="sheet-badges" class="bottom-sheet__badges"></div>
+    </div>
+    <div id="sheet-body" class="bottom-sheet__body"></div>
+  </div>
+
+  <div id="verify-modal" class="modal-overlay" hidden>
+    <div class="modal-sheet">
+      <button class="modal-close" data-close-modal type="button" aria-label="Schließen">✕</button>
+      <h2>Zu prüfende Angaben</h2>
+      <p class="species-note">Diese Liste sammelt alle offenen Punkte (Preise, Öffnungszeiten, Zufahrt u.a.), die noch vor Ort verifiziert werden sollten.</p>
+      <div id="verify-list"></div>
+    </div>
+  </div>
+
+  <div id="favorites-modal" class="modal-overlay" hidden>
+    <div class="modal-sheet">
+      <button class="modal-close" data-close-modal type="button" aria-label="Schließen">✕</button>
+      <h2>Favoriten</h2>
+      <div id="favorites-list"></div>
+      <h3>Export / Import</h3>
+      <p class="species-note">Falls der Browser-Speicher unter file:// nicht zuverlässig funktioniert: Hier als Text sichern und später wieder einfügen.</p>
+      <textarea id="favorites-io" spellcheck="false"></textarea>
+      <div class="modal-actions">
+        <button id="favorites-export" class="btn" type="button">Exportieren</button>
+        <button id="favorites-import" class="btn btn-primary" type="button">Importieren</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../vendor/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
