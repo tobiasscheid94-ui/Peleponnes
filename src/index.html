@@ -77,13 +77,31 @@
       <button class="modal-close" data-close-modal type="button" aria-label="Schließen">✕</button>
       <h2>Favoriten</h2>
       <div id="favorites-list"></div>
+      <h3>Bewertet / besucht</h3>
+      <p class="species-note">Sterne vergibst du direkt am jeweiligen Eintrag. Hier siehst du alle bisher bewerteten Orte.</p>
+      <div id="ratings-list"></div>
+      <h3>Empfehlungen für dich</h3>
+      <div id="recommendations-list"></div>
       <h3>Export / Import</h3>
-      <p class="species-note">Falls der Browser-Speicher unter file:// nicht zuverlässig funktioniert: Hier als Text sichern und später wieder einfügen.</p>
+      <p class="species-note">Falls der Browser-Speicher unter file:// nicht zuverlässig funktioniert: Hier als Text sichern und später wieder einfügen. Umfasst Favoriten und Bewertungen gemeinsam.</p>
       <textarea id="favorites-io" spellcheck="false"></textarea>
       <div class="modal-actions">
         <button id="favorites-export" class="btn" type="button">Exportieren</button>
         <button id="favorites-import" class="btn btn-primary" type="button">Importieren</button>
       </div>
+    </div>
+  </div>
+
+  <div id="tour-bar" class="tour-bar" hidden>
+    <button id="tour-exit" class="tour-bar__exit" type="button" aria-label="Rundgang beenden">✕</button>
+    <div class="tour-bar__info">
+      <div class="tour-bar__title" id="tour-bar-title"></div>
+      <div class="tour-bar__stop" id="tour-bar-stop"></div>
+    </div>
+    <div class="tour-bar__nav">
+      <button id="tour-prev" class="icon-btn" type="button" aria-label="Vorherige Station">‹</button>
+      <span id="tour-bar-counter" class="tour-bar__counter"></span>
+      <button id="tour-next" class="icon-btn" type="button" aria-label="Nächste Station">›</button>
     </div>
   </div>
 

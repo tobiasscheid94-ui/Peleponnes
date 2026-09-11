@@ -179,7 +179,32 @@
         },
         "whatToDo": { "type": "array", "items": { "type": "string" } },
         "parking": { "type": ["string", "null"] },
-        "foodScene": { "type": "string", "description": "Struktur/Kriterien, keine erfundenen Lokalnamen." }
+        "foodScene": { "type": "string", "description": "Struktur/Kriterien, keine erfundenen Lokalnamen." },
+        "walkingTour": {
+          "type": ["object", "null"],
+          "description": "Optionaler Fussweg-Rundgang durch den Ort. Nur fuer Orte mit begehbarem historischem Kern; kein Pflichtfeld. Stationsverbindungen sind Luftlinien zur Orientierung, keine echte Wegfuehrung -- das UI muss das sichtbar kennzeichnen.",
+          "required": ["title", "durationMinutes", "distanceKm", "terrain", "stops"],
+          "properties": {
+            "title": { "type": "string" },
+            "durationMinutes": { "type": "integer", "minimum": 1 },
+            "distanceKm": { "type": ["number", "null"] },
+            "terrain": { "type": "string" },
+            "stops": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "required": ["name", "coords", "note"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "coords": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+                  "note": { "type": "string" },
+                  "minutes": { "type": ["integer", "null"] }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "monasteryCastleExtra": {

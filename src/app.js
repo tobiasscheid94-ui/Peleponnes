@@ -242,6 +242,26 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     storageSet('peloponnes:favorites', JSON.stringify(Array.from(favorites)));
   }
 
+  // visits: entryId -> { rating: 1-5, visitedAt: ISO-String }
+  var visits = {};
+  (function loadVisits() {
+    try {
+      var raw = storageGet('peloponnes:visits');
+      if (raw) visits = JSON.parse(raw) || {};
+    } catch (e) { /* ignore corrupt storage */ }
+  })();
+  function persistVisits() {
+    storageSet('peloponnes:visits', JSON.stringify(visits));
+  }
+  function setRating(id, rating) {
+    if (rating === null) {
+      delete visits[id];
+    } else {
+      visits[id] = { rating: rating, visitedAt: (visits[id] && visits[id].visitedAt) || new Date().toISOString() };
+    }
+    persistVisits();
+  }
+
   function encodeHash() {
     var parts = [];
     if (state.types.size) parts.push('t=' + Array.from(state.types).join(','));
@@ -413,6 +433,136 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     return allEntries.filter(matchesFilters);
   }
 
+  // ---------- Merkmale, Aehnlichkeit, Empfehlungen ----------
+  // Merkmalsbasierte Aehnlichkeit statt Blackbox-Score: jeder Eintrag wird auf
+  // eine Menge einfacher Merkmal-Strings abgebildet (Tags plus typspezifische
+  // Felder). Aehnlichkeit = Groesse der Schnittmenge zweier Merkmalsmengen.
+
+  function featureSet(e) {
+    var f = [];
+    (e.tags || []).forEach(function (t) { f.push('tag:' + t); });
+    f.push('region:' + e.region);
+    if (e.type === 'beach') {
+      if (e.seabed) f.push('seabed:' + e.seabed);
+      if (e.shade) f.push('shade:' + e.shade);
+      if (e.access && e.access.difficulty) f.push('difficulty:' + e.access.difficulty);
+      if (e.snorkeling && e.snorkeling.habitat) f.push('habitat:' + e.snorkeling.habitat);
+    } else if (e.type === 'site' || e.type === 'monastery_castle') {
+      (e.epoch || []).forEach(function (ep) { f.push('epoch:' + ep); });
+    } else if (e.type === 'hike') {
+      if (e.difficulty) f.push('difficulty:' + e.difficulty);
+    } else if (e.type === 'town') {
+      // Tags und Region tragen hier das Hauptsignal.
+    }
+    return f;
+  }
+
+  function sharedFeatures(a, b) {
+    var setB = {};
+    featureSet(b).forEach(function (f) { setB[f] = true; });
+    var shared = featureSet(a).filter(function (f) { return setB[f]; });
+    // Verschiedene Merkmal-Praefixe koennen auf denselben Anzeigetext abbilden
+    // (z. B. tag:mykenisch und epoch:mykenisch) -- fuer Begruendungstexte nach
+    // Anzeigetext deduplizieren, damit nicht derselbe Begriff doppelt auftaucht.
+    var seenLabels = {};
+    return shared.filter(function (f) {
+      var label = humanizeFeature(f);
+      if (seenLabels[label]) return false;
+      seenLabels[label] = true;
+      return true;
+    });
+  }
+
+  function humanizeFeature(f) {
+    var parts = f.split(':');
+    var key = parts[0], val = parts.slice(1).join(':');
+    if (key === 'tag') return val;
+    if (key === 'region') return REGION_LABELS[val] || val;
+    if (key === 'seabed') return 'Meeresboden ' + val;
+    if (key === 'shade') return val;
+    if (key === 'difficulty') return 'Schwierigkeit ' + val;
+    if (key === 'habitat') return (habitats[val] && habitats[val].name) || val;
+    if (key === 'epoch') return val;
+    return val;
+  }
+
+  function similarEntries(entry, limit) {
+    var candidates = allEntries.filter(function (e) { return e.id !== entry.id && e.type === entry.type; });
+    var scored = candidates.map(function (e) {
+      return { entry: e, shared: sharedFeatures(entry, e) };
+    }).filter(function (s) { return s.shared.length > 0; });
+    scored.sort(function (a, b) { return b.shared.length - a.shared.length; });
+    return scored.slice(0, limit || 3);
+  }
+
+  // Empfehlungen: Geschmacksprofil pro Typ aus bewerteten Eintraegen ableiten
+  // (Gewicht = Bewertung - 3, also -2..+2), unbewertete Eintraege desselben
+  // Typs danach bepunkten. Kein Rankingmysterium: jede Empfehlung nennt ihre
+  // staerksten Bezugspunkte unter den bewerteten Orten.
+  function ratedEntries() {
+    return Object.keys(visits).map(function (id) {
+      var e = entriesById[id];
+      if (!e) return null;
+      return { entry: e, rating: visits[id].rating };
+    }).filter(Boolean);
+  }
+
+  function buildTasteProfiles() {
+    var byType = {};
+    ratedEntries().forEach(function (r) {
+      var type = r.entry.type;
+      if (!byType[type]) byType[type] = { weights: {}, exemplars: [], trapLevels: [] };
+      var weight = r.rating - 3;
+      featureSet(r.entry).forEach(function (f) {
+        byType[type].weights[f] = (byType[type].weights[f] || 0) + weight;
+      });
+      byType[type].exemplars.push(r);
+      if (r.rating >= 4 && r.entry.touristTrapRisk) byType[type].trapLevels.push(r.entry.touristTrapRisk.level);
+    });
+    return byType;
+  }
+
+  function recommendations(maxTotal) {
+    var totalRatings = Object.keys(visits).length;
+    if (totalRatings < 3) return { ready: false, items: [] };
+
+    var profiles = buildTasteProfiles();
+    var visitedIds = {};
+    Object.keys(visits).forEach(function (id) { visitedIds[id] = true; });
+    var items = [];
+
+    Object.keys(profiles).forEach(function (type) {
+      var profile = profiles[type];
+      var trapCap = profile.trapLevels.length
+        ? Math.max.apply(null, profile.trapLevels) + 1
+        : 5;
+      var candidates = allEntries.filter(function (e) { return e.type === type && !visitedIds[e.id]; });
+      var scored = candidates.map(function (e) {
+        var score = 0;
+        featureSet(e).forEach(function (f) { score += profile.weights[f] || 0; });
+        if (e.touristTrapRisk && e.touristTrapRisk.level > trapCap) score -= 3;
+        return { entry: e, score: score };
+      }).filter(function (s) { return s.score > 0; });
+      scored.sort(function (a, b) { return b.score - a.score; });
+
+      scored.slice(0, 2).forEach(function (s) {
+        // Staerkste Bezugspunkte: bewertete Exemplare mit den meisten geteilten Merkmalen.
+        var exemplarScores = profile.exemplars.map(function (ex) {
+          return { ex: ex, shared: sharedFeatures(s.entry, ex.entry) };
+        }).filter(function (x) { return x.shared.length > 0; });
+        exemplarScores.sort(function (a, b) { return b.shared.length - a.shared.length; });
+        var top = exemplarScores.slice(0, 2);
+        items.push({ entry: s.entry, reasonExemplars: top });
+      });
+    });
+
+    items.sort(function (a, b) {
+      return (b.reasonExemplars[0] ? b.reasonExemplars[0].shared.length : 0) -
+        (a.reasonExemplars[0] ? a.reasonExemplars[0].shared.length : 0);
+    });
+    return { ready: true, items: items.slice(0, maxTotal || 6) };
+  }
+
   // ---------- Clustering (eigenes, einfaches Grid-Verfahren) ----------
 
   function groupIntoClusters(entries) {
@@ -466,6 +616,83 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   }
 
   map.on('zoomend', renderMarkers);
+
+  // ---------- Stadtrundgang ----------
+  // Eigener Layer mit nummerierten Stationsmarkern und einer gestrichelten
+  // Linie, die ausdruecklich als Luftlinie (keine Wegfuehrung) gekennzeichnet
+  // ist -- Vortaeuschen von echtem Routing ist laut Briefing ausgeschlossen.
+
+  var tourLayer = L.layerGroup();
+  var tourState = null; // { entryId, stopIndex }
+  var tourBar = document.getElementById('tour-bar');
+  var tourBarTitle = document.getElementById('tour-bar-title');
+  var tourBarStop = document.getElementById('tour-bar-stop');
+  var tourBarCounter = document.getElementById('tour-bar-counter');
+
+  function buildTourMarkerIcon(num, isCurrent) {
+    return L.divIcon({
+      html: '<div class="tour-marker' + (isCurrent ? ' is-current' : '') + '">' + num + '</div>',
+      className: 'tour-marker-wrap',
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+  }
+
+  function startTour(entryId, stopIndex) {
+    var e = entriesById[entryId];
+    if (!e || !e.walkingTour) return;
+    tourState = { entryId: entryId, stopIndex: stopIndex || 0 };
+    closeSheet();
+    map.removeLayer(markerLayer);
+    tourLayer.clearLayers();
+    var latlngs = e.walkingTour.stops.map(function (s) { return [s.coords[0], s.coords[1]]; });
+    L.polyline(latlngs, { color: '#a0442c', weight: 3, dashArray: '6,8', opacity: 0.85 }).addTo(tourLayer);
+    e.walkingTour.stops.forEach(function (s, i) {
+      L.marker([s.coords[0], s.coords[1]], { icon: buildTourMarkerIcon(i + 1, i === tourState.stopIndex) }).addTo(tourLayer);
+    });
+    tourLayer.addTo(map);
+    tourBar.hidden = false;
+    updateTourUI();
+  }
+
+  function updateTourUI() {
+    if (!tourState) return;
+    var e = entriesById[tourState.entryId];
+    var wt = e.walkingTour;
+    var stop = wt.stops[tourState.stopIndex];
+    tourBarTitle.textContent = wt.title;
+    tourBarStop.textContent = (tourState.stopIndex + 1) + '. ' + stop.name;
+    tourBarCounter.textContent = (tourState.stopIndex + 1) + '/' + wt.stops.length + ' · Luftlinie';
+    // Marker-Icons neu setzen, damit die aktuelle Station hervorgehoben ist.
+    var i = 0;
+    tourLayer.eachLayer(function (layer) {
+      if (layer instanceof L.Marker) {
+        layer.setIcon(buildTourMarkerIcon(i + 1, i === tourState.stopIndex));
+        i++;
+      }
+    });
+    map.flyTo([stop.coords[0], stop.coords[1]], Math.max(map.getZoom(), 16), { duration: 0.5 });
+  }
+
+  function tourStep(delta) {
+    if (!tourState) return;
+    var e = entriesById[tourState.entryId];
+    var n = e.walkingTour.stops.length;
+    tourState.stopIndex = Math.max(0, Math.min(n - 1, tourState.stopIndex + delta));
+    updateTourUI();
+  }
+
+  function exitTour() {
+    if (!tourState) return;
+    map.removeLayer(tourLayer);
+    if (!map.hasLayer(markerLayer)) markerLayer.addTo(map);
+    tourState = null;
+    tourBar.hidden = true;
+  }
+
+  document.getElementById('tour-prev').addEventListener('click', function () { tourStep(-1); });
+  document.getElementById('tour-next').addEventListener('click', function () { tourStep(1); });
+  document.getElementById('tour-exit').addEventListener('click', exitTour);
 
   // ---------- Bottom Sheet ----------
 
@@ -589,6 +816,22 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     html += listBlock('Was tun', e.whatToDo);
     html += fieldRow('Parken', e.parking);
     if (e.foodScene) html += '<h3>Essen</h3><p>' + escapeHtml(e.foodScene) + '</p>';
+    if (e.walkingTour) html += renderWalkingTourSection(e);
+    return html;
+  }
+
+  function renderWalkingTourSection(e) {
+    var wt = e.walkingTour;
+    var html = '<h3>Rundgang: ' + escapeHtml(wt.title) + '</h3>';
+    html += '<p>' + (wt.distanceKm ? wt.distanceKm + ' km, ' : '') + 'ca. ' + wt.durationMinutes + ' Min. · ' + escapeHtml(wt.terrain) + '</p>';
+    html += '<p class="species-note">Die Linie zwischen den Stationen ist eine Luftlinie zur Orientierung, keine echte Wegführung.</p>';
+    html += wt.stops.map(function (stop, i) {
+      return '<button type="button" class="tour-stop-row" data-tour-jump="' + escapeHtml(e.id) + '" data-tour-index="' + i + '">' +
+        '<span class="tour-stop-row__num">' + (i + 1) + '</span>' +
+        '<span class="tour-stop-row__body"><strong>' + escapeHtml(stop.name) + '</strong><span>' + escapeHtml(stop.note) + '</span></span>' +
+        '</button>';
+    }).join('');
+    html += '<button type="button" class="btn btn-primary tour-start-btn" data-tour-start="' + escapeHtml(e.id) + '">Rundgang starten</button>';
     return html;
   }
 
@@ -633,14 +876,36 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     if (e.coordSource === 'approx') badges += '<span class="badge">Position ungefähr</span>';
     sheetBadgesEl.innerHTML = badges;
 
-    var bodyHtml = renderSheetBody(e);
+    var bodyHtml = renderRatingWidget(id);
+    bodyHtml += renderSheetBody(e);
     if (e.needsVerification && e.needsVerification.length) {
       bodyHtml += '<h3>Vor Ort prüfen</h3><ul class="verify-list">' +
         e.needsVerification.map(function (v) { return '<li>' + escapeHtml(v) + '</li>'; }).join('') + '</ul>';
     }
+    var similar = similarEntries(e, 3);
+    if (similar.length) {
+      bodyHtml += '<h3>Ähnliche Orte</h3><div class="similar-places">' + similar.map(function (s) {
+        var why = s.shared.slice(0, 3).map(humanizeFeature).join(', ');
+        return '<button type="button" class="similar-place-btn" data-open-entry="' + escapeHtml(s.entry.id) + '">' +
+          escapeHtml(s.entry.name) + '<span class="why">' + escapeHtml(why) + '</span></button>';
+      }).join('') + '</div>';
+    }
     sheetBodyEl.innerHTML = bodyHtml;
 
     setSheetState('half');
+  }
+
+  function renderRatingWidget(id) {
+    var current = visits[id] ? visits[id].rating : 0;
+    var stars = '';
+    for (var i = 1; i <= 5; i++) {
+      stars += '<button type="button" class="sheet-rating__star' + (i <= current ? ' is-filled' : '') +
+        '" data-rate="' + i + '" aria-label="' + i + ' Sterne">' + (i <= current ? '★' : '☆') + '</button>';
+    }
+    return '<div class="sheet-rating">' +
+      '<span class="sheet-rating__stars">' + stars + '</span>' +
+      (current ? '<button type="button" class="sheet-rating__clear" data-rate-clear>War doch nicht hier</button>' : '<span class="species-note">War ich hier?</span>') +
+      '</div>';
   }
 
   function closeSheet() {
@@ -657,6 +922,38 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     sheetFavBtn.classList.toggle('is-favorite', favorites.has(currentSheetEntryId));
     sheetFavBtn.textContent = favorites.has(currentSheetEntryId) ? '★' : '☆';
     renderMarkers();
+  });
+
+  // Event-Delegation fuer Inhalte, die bei jedem openSheet() neu als HTML
+  // gesetzt werden (Sterne, Rundgang-Stationen/Start, "Aehnliche Orte").
+  sheetBodyEl.addEventListener('click', function (ev) {
+    var rateBtn = ev.target.closest('[data-rate]');
+    if (rateBtn && currentSheetEntryId) {
+      setRating(currentSheetEntryId, parseInt(rateBtn.getAttribute('data-rate'), 10));
+      openSheet(currentSheetEntryId);
+      return;
+    }
+    var clearBtn = ev.target.closest('[data-rate-clear]');
+    if (clearBtn && currentSheetEntryId) {
+      setRating(currentSheetEntryId, null);
+      openSheet(currentSheetEntryId);
+      return;
+    }
+    var openBtn = ev.target.closest('[data-open-entry]');
+    if (openBtn) {
+      openSheet(openBtn.getAttribute('data-open-entry'));
+      return;
+    }
+    var tourStartBtn = ev.target.closest('[data-tour-start]');
+    if (tourStartBtn) {
+      startTour(tourStartBtn.getAttribute('data-tour-start'), 0);
+      return;
+    }
+    var tourJumpBtn = ev.target.closest('[data-tour-jump]');
+    if (tourJumpBtn) {
+      startTour(tourJumpBtn.getAttribute('data-tour-jump'), parseInt(tourJumpBtn.getAttribute('data-tour-index'), 10));
+      return;
+    }
   });
 
   // Swipe-to-dismiss / Snap zwischen Peek-Half-Full über Handle & Header.
@@ -854,6 +1151,8 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   var favoritesToggle = document.getElementById('favorites-toggle');
   var favoritesModal = document.getElementById('favorites-modal');
   var favoritesListEl = document.getElementById('favorites-list');
+  var ratingsListEl = document.getElementById('ratings-list');
+  var recommendationsListEl = document.getElementById('recommendations-list');
   var favoritesIO = document.getElementById('favorites-io');
 
   function renderFavoritesList() {
@@ -863,17 +1162,73 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
       return;
     }
     favoritesListEl.innerHTML = favEntries.map(function (e) {
-      return '<div class="needs-verify-entry"><strong>' + escapeHtml(e.name) + '</strong>' +
-        escapeHtml(TYPE_LABELS[e.type] || e.type) + ' · ' + escapeHtml(REGION_LABELS[e.region] || e.region) + '</div>';
+      return '<button type="button" class="similar-place-btn" data-open-entry-modal="' + escapeHtml(e.id) + '"><strong>' + escapeHtml(e.name) + '</strong> · ' +
+        escapeHtml(TYPE_LABELS[e.type] || e.type) + ' · ' + escapeHtml(REGION_LABELS[e.region] || e.region) + '</button>';
     }).join('');
   }
 
-  favoritesToggle.addEventListener('click', function () {
+  function renderRatingsList() {
+    var rated = ratedEntries();
+    if (!rated.length) {
+      ratingsListEl.innerHTML = '<p class="species-note">Noch keine Orte bewertet. Im Bottom Sheet eines Eintrags einfach Sterne vergeben.</p>';
+      return;
+    }
+    rated.sort(function (a, b) { return b.rating - a.rating; });
+    ratingsListEl.innerHTML = rated.map(function (r) {
+      var stars = '';
+      for (var i = 1; i <= 5; i++) stars += i <= r.rating ? '★' : '☆';
+      return '<button type="button" class="similar-place-btn" data-open-entry-modal="' + escapeHtml(r.entry.id) + '"><strong>' + escapeHtml(r.entry.name) + '</strong> ' +
+        '<span class="rating-star-row">' + stars + '</span></button>';
+    }).join('');
+  }
+
+  function renderRecommendationsList() {
+    var result = recommendations(6);
+    if (!result.ready) {
+      recommendationsListEl.innerHTML = '<p class="species-note">Noch keine Empfehlungen – bewerte mindestens 3 Orte, dann leite ich daraus Vorschläge ab.</p>';
+      return;
+    }
+    if (!result.items.length) {
+      recommendationsListEl.innerHTML = '<p class="species-note">Aus den bisherigen Bewertungen ergeben sich noch keine passenden Vorschläge.</p>';
+      return;
+    }
+    recommendationsListEl.innerHTML = result.items.map(function (item) {
+      var reasonParts = item.reasonExemplars.map(function (x) {
+        return x.ex.entry.name + ' (' + x.ex.rating + '★)';
+      });
+      var sharedLabels = item.reasonExemplars.length
+        ? item.reasonExemplars[0].shared.slice(0, 3).map(humanizeFeature).join(', ')
+        : '';
+      var reason = reasonParts.length
+        ? 'Weil dir ' + reasonParts.join(' und ') + ' gefallen haben' + (sharedLabels ? ' — beide ' + sharedLabels : '')
+        : 'Passt zu deinem bisherigen Geschmack';
+      return '<button type="button" class="similar-place-btn" data-open-entry-modal="' + escapeHtml(item.entry.id) + '"><strong>' + escapeHtml(item.entry.name) + '</strong>' +
+        '<span class="why">' + escapeHtml(reason) + '</span></button>';
+    }).join('');
+  }
+
+  function renderFavoritesModal() {
     renderFavoritesList();
+    renderRatingsList();
+    renderRecommendationsList();
+  }
+
+  favoritesToggle.addEventListener('click', function () {
+    renderFavoritesModal();
     favoritesModal.hidden = false;
   });
+  favoritesModal.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-open-entry-modal]');
+    if (!btn) return;
+    favoritesModal.hidden = true;
+    openSheet(btn.getAttribute('data-open-entry-modal'));
+  });
   document.getElementById('favorites-export').addEventListener('click', function () {
-    favoritesIO.value = JSON.stringify({ favorites: Array.from(favorites), exportedAt: new Date().toISOString() }, null, 2);
+    favoritesIO.value = JSON.stringify({
+      favorites: Array.from(favorites),
+      visits: visits,
+      exportedAt: new Date().toISOString()
+    }, null, 2);
   });
   document.getElementById('favorites-import').addEventListener('click', function () {
     try {
@@ -882,7 +1237,16 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
       if (!Array.isArray(ids)) throw new Error('Kein Favoriten-Array gefunden.');
       favorites = new Set(ids.filter(function (id) { return entriesById[id]; }));
       persistFavorites();
-      renderFavoritesList();
+      if (parsed.visits && typeof parsed.visits === 'object') {
+        var importedVisits = {};
+        Object.keys(parsed.visits).forEach(function (id) {
+          var v = parsed.visits[id];
+          if (entriesById[id] && v && v.rating >= 1 && v.rating <= 5) importedVisits[id] = v;
+        });
+        visits = importedVisits;
+        persistVisits();
+      }
+      renderFavoritesModal();
       renderMarkers();
     } catch (e) {
       window.alert('Import fehlgeschlagen: ' + e.message);
@@ -925,6 +1289,9 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   window.__peloponnesGuide = {
     map: map, bounds: bounds, state: state, allEntries: allEntries,
     openSheet: openSheet, closeSheet: closeSheet, renderMarkers: renderMarkers,
-    groupIntoClusters: groupIntoClusters, favorites: favorites
+    groupIntoClusters: groupIntoClusters, favorites: favorites,
+    visits: visits, setRating: setRating, recommendations: recommendations,
+    similarEntries: similarEntries, startTour: startTour, tourStep: tourStep,
+    exitTour: exitTour, getTourState: function () { return tourState; }
   };
 })();

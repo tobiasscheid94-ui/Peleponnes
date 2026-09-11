@@ -172,6 +172,29 @@ function checkSite(e, file) {
 function checkTown(e, file) {
   const req = ['character', 'historyTimeline', 'whatToDo', 'parking', 'foodScene'];
   for (const f of req) if (!(f in e)) err(e.id, file, `Stadt-Pflichtfeld '${f}' fehlt.`);
+  if (e.walkingTour) checkWalkingTour(e, file);
+}
+
+function checkWalkingTour(e, file) {
+  const wt = e.walkingTour;
+  const req = ['title', 'durationMinutes', 'distanceKm', 'terrain', 'stops'];
+  for (const f of req) if (!(f in wt)) err(e.id, file, `walkingTour-Pflichtfeld '${f}' fehlt.`);
+  if (!Array.isArray(wt.stops) || wt.stops.length < 2) {
+    err(e.id, file, `walkingTour.stops muss mindestens 2 Stationen enthalten.`);
+    return;
+  }
+  wt.stops.forEach((stop, i) => {
+    if (!isNonEmptyString(stop.name)) err(e.id, file, `walkingTour.stops[${i}].name fehlt oder leer.`);
+    if (!isNonEmptyString(stop.note)) err(e.id, file, `walkingTour.stops[${i}].note fehlt oder leer.`);
+    if (!Array.isArray(stop.coords) || stop.coords.length !== 2 || stop.coords.some((n) => typeof n !== 'number')) {
+      err(e.id, file, `walkingTour.stops[${i}].coords muss [lat, lon] als Zahlen sein.`);
+    } else {
+      const [lat, lon] = stop.coords;
+      if (lat < BBOX.minLat || lat > BBOX.maxLat || lon < BBOX.minLon || lon > BBOX.maxLon) {
+        err(e.id, file, `walkingTour.stops[${i}] coords [${lat}, ${lon}] liegen ausserhalb der Peloponnes-Bounding-Box.`);
+      }
+    }
+  });
 }
 
 function main() {

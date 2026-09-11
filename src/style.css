@@ -485,3 +485,192 @@ html, body {
 .offline-banner[hidden] {
   display: none;
 }
+
+/* ---------- Bewertung ---------- */
+
+.sheet-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.sheet-rating__stars {
+  display: flex;
+  gap: 2px;
+}
+.sheet-rating__star {
+  border: none;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-border);
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sheet-rating__star.is-filled {
+  color: #d9a520;
+}
+.sheet-rating__clear {
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  min-height: var(--tap-min);
+  padding: 0 8px;
+}
+.rating-star-row {
+  display: inline-flex;
+  gap: 1px;
+  color: #d9a520;
+  font-size: 14px;
+}
+
+/* ---------- Aehnliche Orte ---------- */
+
+.similar-places {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.similar-place-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-height: var(--tap-min);
+  font-size: 14px;
+  color: var(--color-text);
+}
+.similar-place-btn .why {
+  display: block;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ---------- Stadtrundgang ---------- */
+
+.tour-stop-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  min-height: var(--tap-min);
+}
+.tour-stop-row:last-child {
+  border-bottom: none;
+}
+.tour-stop-row__num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+.tour-stop-row__body strong {
+  display: block;
+  font-size: 14px;
+}
+.tour-stop-row__body span {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.tour-start-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.tour-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.tour-marker.is-current {
+  background: #d9a520;
+  transform: scale(1.15);
+}
+
+.tour-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 650;
+  background: var(--color-surface);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.25);
+  padding: 10px calc(var(--safe-right) + 12px) calc(var(--safe-bottom) + 10px) calc(var(--safe-left) + 12px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tour-bar[hidden] {
+  display: none;
+}
+.tour-bar__exit {
+  border: none;
+  background: none;
+  font-size: 18px;
+  color: var(--color-text-muted);
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  flex-shrink: 0;
+}
+.tour-bar__info {
+  flex: 1;
+  min-width: 0;
+}
+.tour-bar__title {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.tour-bar__stop {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tour-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.tour-bar__counter {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  min-width: 36px;
+  text-align: center;
+}

@@ -380,14 +380,68 @@
     "nearby": ["kalamata-burg"],
     "tags": ["stadt", "oliven", "1821", "erdbeben"],
     "confidence": "medium",
-    "needsVerification": ["Aktuelle Parkregelung Innenstadt"],
+    "needsVerification": [
+      "Aktuelle Parkregelung Innenstadt",
+      "Rundgang (walkingTour): Stationskoordinaten sind grobe Näherungen entlang der plausiblen Route vom Burghügel zum Hafen, nicht einzeln vor Ort vermessen",
+      "Rundgang: Name und Lage des zentralen Platzes ('Platz 23. März') sowie die genaue Reihenfolge/Fußweg-Realität nicht per Websuche gegengeprüft (Recherche-Sitzung war zum Zeitpunkt der Erstellung nicht verfügbar)"
+    ],
     "character": "Kalamata ist die größte Stadt Messeniens und wirkt entsprechend weniger auf Tourismus zugeschnitten als die Küstenorte der Region. Das Erdbeben vom 13. September 1986 (Magnitude 5,9, 20 Todesopfer) zerstörte mehrere moderne Gebäude und beschädigte die historische Altstadt erheblich – ein Teil des heutigen Stadtbilds ist Wiederaufbau. Die Stadt gab den weltbekannten Kalamata-Oliven ihren Namen, deren geschützte Herkunftsbezeichnung seit 1996 an den Anbau in der Region Messenien gebunden ist; historisch war Kalamata zudem ein Zentrum der Seidenproduktion, getragen unter anderem vom Kloster Kalograion (gegründet 1796).",
     "historyTimeline": [
       {"period": "23. März 1821", "note": "Kalamata wird als eine der ersten Städte im griechischen Unabhängigkeitskrieg eingenommen, die osmanische Garnison ergibt sich weitgehend kampflos; anschließend bildet sich hier der 'Messenische Senat' als revolutionäres Verwaltungsorgan."}
     ],
     "whatToDo": ["Burg von Kalamata auf dem Hügel über der Altstadt", "Historisches Zentrum und die Fußgängerzone Aristomenous-Straße", "Hafenpromenade"],
     "parking": null,
-    "foodScene": "Breites Angebot an Tavernen im Stadtzentrum, weniger auf Tagestouristen als auf lokales Publikum ausgerichtet."
+    "foodScene": "Breites Angebot an Tavernen im Stadtzentrum, weniger auf Tagestouristen als auf lokales Publikum ausgerichtet.",
+    "walkingTour": {
+      "title": "Altstadt-Rundgang: Burg zum Hafen",
+      "durationMinutes": 90,
+      "distanceKm": 2.8,
+      "terrain": "Überwiegend asphaltierte Straßen und die Fußgängerzone Aristomenous-Straße; vom Burghügel geht es durchgehend leicht bergab zum Meer.",
+      "stops": [
+        {
+          "name": "Burg von Kalamata",
+          "coords": [37.0458, 22.1167],
+          "note": "Startpunkt auf dem Hügel über der Altstadt, mit erstem Überblick über die Dächer bis zum Meer. Details zur Burg selbst siehe eigener Eintrag.",
+          "minutes": 20
+        },
+        {
+          "name": "Kathedrale Ypapanti",
+          "coords": [37.0410, 22.1130],
+          "note": "Hauptkirche der Stadt am Übergang vom Burghügel zur Altstadt. Ein oft wiederholter Bezug zur Flaggenhissung der Revolution 1821 ließ sich nicht verifizieren – hier ohne diese Behauptung aufgeführt.",
+          "minutes": 10
+        },
+        {
+          "name": "Platz 23. März",
+          "coords": [37.0390, 22.1115],
+          "note": "Zentraler Platz, benannt nach dem Datum der Einnahme der Stadt 1821 (siehe historyTimeline oben).",
+          "minutes": 10
+        },
+        {
+          "name": "Aristomenous-Straße",
+          "coords": [37.0378, 22.1111],
+          "note": "Hauptfußgängerzone mit Geschäften und Cafés, Rückgrat der Innenstadt.",
+          "minutes": 15
+        },
+        {
+          "name": "Archäologisches Museum",
+          "coords": [37.0370, 22.1120],
+          "note": "Regionalmuseum in einem restaurierten historischen Gebäude.",
+          "minutes": 20
+        },
+        {
+          "name": "Eisenbahnpark",
+          "coords": [37.0350, 22.1100],
+          "note": "Öffentlicher Park auf dem Gelände des früheren Bahnhofs, mit erhaltenen historischen Lokomotiven und Waggons der alten Peloponnes-Bahn.",
+          "minutes": 15
+        },
+        {
+          "name": "Hafenpromenade",
+          "coords": [37.0320, 22.1130],
+          "note": "Abschluss des Rundgangs am Wasser, mit Blick auf den Messenischen Golf.",
+          "minutes": 10
+        }
+      ]
+    }
   },
   {
     "id": "kalamata-burg",
