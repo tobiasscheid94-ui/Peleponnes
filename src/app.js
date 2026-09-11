@@ -854,7 +854,11 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
 
   function renderSheetBody(e) {
     if (e.type === 'beach') return renderBeachBody(e);
-    if (e.type === 'site') return renderSiteBody(e);
+    // monastery_castle teilt sich praktisch dieselbe Feldstruktur wie site
+    // (epoch/dating/whyItMatters/whatYouSee/walkthrough/misconceptions/...)
+    // und bekommt daher dieselbe, vollstaendigere Darstellung statt der
+    // generischen Fallback-Ansicht.
+    if (e.type === 'site' || e.type === 'monastery_castle') return renderSiteBody(e);
     if (e.type === 'town') return renderTownBody(e);
     return renderGenericBody(e);
   }
