@@ -677,7 +677,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   --color-border: #ddd6c9;
   --color-accent: #a0442c;
   --color-accent-contrast: #ffffff;
-  --color-warn: #b6791a;
+  --color-warn: #8a5813;
+  --color-gold: #8f6b00;
   --color-danger: #a0442c;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -985,7 +986,7 @@ html, body {
   flex-shrink: 0;
 }
 .bottom-sheet__fav.is-favorite {
-  color: #d9a520;
+  color: var(--color-gold);
 }
 .bottom-sheet__badges {
   display: flex;
@@ -1182,7 +1183,7 @@ html, body {
   justify-content: center;
 }
 .sheet-rating__star.is-filled {
-  color: #d9a520;
+  color: var(--color-gold);
 }
 .sheet-rating__clear {
   border: none;
@@ -1195,7 +1196,7 @@ html, body {
 .rating-star-row {
   display: inline-flex;
   gap: 1px;
-  color: #d9a520;
+  color: var(--color-gold);
   font-size: 14px;
 }
 
@@ -1284,7 +1285,7 @@ html, body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 .tour-marker.is-current {
-  background: #d9a520;
+  background: var(--color-gold);
   transform: scale(1.15);
 }
 
@@ -1313,7 +1314,7 @@ html, body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 .route-marker.is-current {
-  background: #d9a520;
+  background: var(--color-gold);
   transform: scale(1.15);
 }
 .route-bar__details {
