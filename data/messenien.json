@@ -466,7 +466,7 @@
     "whyItMatters": "Die Burg von Kalamata steht wie Passava in der Mani für die fränkische Herrschaftsschicht auf der Peloponnes nach der Vierten Kreuzfahrt. Als Sitz der Gründerfamilie des Fürstentums Achaia hatte sie eine zentralere Rolle als die meisten anderen fränkischen Burgen der Region. In der Folgezeit wurde sie wiederholt angegriffen und beschädigt – durch slawische Gruppen 1293, durch Venedig 1685 und durch osmanische Truppen 1825 während des griechischen Unabhängigkeitskriegs. Diese Abfolge von Angriffen über sechs Jahrhunderte macht die Burg zu einem Gradmesser für die wechselnden Machtverhältnisse in Messenien.",
     "whatYouSee": "Erhalten sind Teile der Ringmauer und ein zentraler Turmbereich auf dem Hügel über der Altstadt, umgeben von Grünanlagen. Keine vollständig erhaltenen Innenräume. Von der Anlage reicht der Blick über die Dächer der Altstadt bis zum Messenischen Golf.",
     "terrain": "Befestigter Weg mit leichtem Anstieg vom Altstadtrand aus.",
-    "combineWith": [],
+    "combineWith": ["kalamata"],
     "ticketInfo": null
   },
   {

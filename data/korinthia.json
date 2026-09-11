@@ -127,7 +127,7 @@
     "shadeAndHeat": "Kaum Schatten auf dem offenen Gelände.",
     "misconceptions": "Die Nemeischen Spiele werden oft pauschal mit Herakles' Tötung des Nemeischen Löwen als 'Gründungsmythos' erklärt – die antike Überlieferung nennt dafür in erster Linie die Trauerfeiern für den Königssohn Opheltes/Archemoros.",
     "readingHooks": "Die Sage der Sieben gegen Theben und der Tod des Opheltes; Herakles' erste Arbeit, die Tötung des Nemeischen Löwen.",
-    "combineWith": [],
+    "combineWith": ["mykene"],
     "ticketInfo": null
   },
   {

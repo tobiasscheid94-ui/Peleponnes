@@ -48,7 +48,7 @@
     "whyItMatters": "Die Burg von Patras zeigt in einem einzigen Bauwerk die typische Abfolge von Herrschaftsschichten auf der Peloponnes: byzantinischer Grundbau nach einem Erdbeben, fränkischer Ausbau nach der Vierten Kreuzfahrt, venezianische Verstärkung, schließlich jahrhundertelange osmanische Nutzung. Die Wiederverwendung älteren Baumaterials von der antiken Akropolis unterstreicht zudem, wie durchgehend besiedelt dieser Hügel über die Jahrtausende war.",
     "whatYouSee": "Erhalten sind die Ringmauer mit mehreren Bauphasen erkennbar an unterschiedlichem Mauerwerk, die runde venezianische Bastion sowie ein zentraler Innenhof. Von den Wällen reicht der Blick über die Stadt Patras, den Hafen und bei klarer Sicht bis zur Rio-Antirrio-Brücke.",
     "terrain": "Befestigte Wege innerhalb der Anlage, leichter Aufstieg vom Altstadtrand.",
-    "combineWith": [],
+    "combineWith": ["patras"],
     "ticketInfo": null
   },
   {

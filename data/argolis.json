@@ -36,7 +36,7 @@
     "shadeAndHeat": "Fast durchgehend schattenlos auf exponiertem Hügel. Besuch früh vormittags oder ab späterem Nachmittag deutlich erträglicher.",
     "misconceptions": "Die von Schliemann gefundene sogenannte 'Maske des Agamemnon' stammt aus einer Bestattung, die etwa 300 Jahre vor der sagenhaften Zeit des Trojanischen Krieges datiert – sie kann also nicht Agamemnons Totenmaske sein, wird in populären Darstellungen aber oft so präsentiert.",
     "readingHooks": "Homers Ilias (Agamemnon als Heerführer der Achaier), Pausanias' Beschreibung Griechenlands (Buch II), sowie Heinrich Schliemanns Ausgrabungsberichte von 1876.",
-    "combineWith": ["nafplio", "tiryns"],
+    "combineWith": ["nafplio", "tiryns", "nemea"],
     "ticketInfo": null
   },
   {

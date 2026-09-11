@@ -29,7 +29,7 @@ function stripDummyDataBlock(js) {
 }
 
 function loadContentData() {
-  const files = fs.readdirSync(DATA).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json'].includes(f));
+  const files = fs.readdirSync(DATA).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json', 'routes.json'].includes(f));
   let entries = [];
   for (const file of files) {
     const parsed = JSON.parse(readText(path.join(DATA, file)));
@@ -38,7 +38,9 @@ function loadContentData() {
   }
   const habitatsPath = path.join(DATA, 'habitats.json');
   const habitats = fs.existsSync(habitatsPath) ? JSON.parse(readText(habitatsPath)) : { habitats: {} };
-  return { entries, habitats };
+  const routesPath = path.join(DATA, 'routes.json');
+  const routes = fs.existsSync(routesPath) ? JSON.parse(readText(routesPath)) : [];
+  return { entries, habitats, routes };
 }
 
 function loadBasemap() {
@@ -77,10 +79,10 @@ function inlineScripts(html, dataScript, leafletJs, appJs) {
 function build() {
   runValidator();
 
-  const { entries, habitats } = loadContentData();
+  const { entries, habitats, routes } = loadContentData();
   const basemap = loadBasemap();
 
-  console.log(`Content: ${entries.length} Eintraege, ${Object.keys(habitats.habitats || {}).length} Habitat-Profile, Basemap: ${basemap ? 'vorhanden' : 'fehlt'}.`);
+  console.log(`Content: ${entries.length} Eintraege, ${Object.keys(habitats.habitats || {}).length} Habitat-Profile, ${routes.length} Tagesrouten, Basemap: ${basemap ? 'vorhanden' : 'fehlt'}.`);
 
   const indexHtml = readText(path.join(SRC, 'index.html'));
   const leafletCss = readText(path.join(ROOT, 'vendor', 'leaflet.css'));
@@ -91,6 +93,7 @@ function build() {
   const dataScript = [
     'window.PELOPONNES_DATA = ' + JSON.stringify(entries) + ';',
     'window.PELOPONNES_HABITATS = ' + JSON.stringify(habitats) + ';',
+    'window.PELOPONNES_ROUTES = ' + JSON.stringify(routes) + ';',
     basemap ? 'window.PELOPONNES_BASEMAP = ' + JSON.stringify(basemap) + ';' : ''
   ].filter(Boolean).join('\n');
 

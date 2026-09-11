@@ -39,7 +39,7 @@
       "level": 1,
       "note": "Kaum touristisch inszeniert, deutlich ruhiger als Dimitsana."
     },
-    "nearby": ["dimitsana", "lousios-schlucht"],
+    "nearby": ["dimitsana", "lousios-schlucht", "karytaina"],
     "tags": ["bergdorf", "goldschmiede", "1821"],
     "confidence": "medium",
     "needsVerification": ["Aktuelle Öffnungszeiten des Volkskundemuseums"],
@@ -92,7 +92,7 @@
       "level": 2,
       "note": "Bekanntes Fotomotiv, aber ein reales, aktives Kloster mit entsprechenden Besucherregeln (Kleiderordnung), kein Museum."
     },
-    "nearby": ["dimitsana", "stemnitsa", "lousios-schlucht"],
+    "nearby": ["dimitsana", "stemnitsa", "lousios-schlucht", "karytaina"],
     "tags": ["kloster", "byzantinisch", "aussicht"],
     "confidence": "medium",
     "needsVerification": ["Exakte Koordinaten nicht unabhängig verifiziert", "Aktuelle Besuchszeiten"],
@@ -101,7 +101,7 @@
     "whyItMatters": "Moni Prodromou ist buchstäblich in eine rund 600 Meter hohe Felswand der Lousios-Schlucht hineingebaut, teils in eine natürliche Höhle – eine Bauweise, die im gesamten griechischen Klosterwesen selten in dieser Dramatik vorkommt. Die traditionelle Gründung wird auf 1167 datiert, auch wenn diese Jahreszahl vor allem aus späterer, touristisch wiederholter Überlieferung stammt und nicht unabhängig belegt ist. Wie viele griechische Klöster wurde es 1834 im Rahmen der bayerisch geprägten Reformen nach der Unabhängigkeit zunächst aufgehoben, später aber wiederbegründet und ist bis heute von Mönchen bewohnt, die Besucher empfangen. Die Lage macht das Kloster zu einem der eindrücklichsten Beispiele dafür, wie byzantinisches Mönchtum bewusst unzugängliche, abgeschiedene Orte suchte.",
     "whatYouSee": "Das Kloster klebt sichtbar an der Felswand, teils auf schmalen, in den Fels gehauenen Vorsprüngen. Innen finden sich eine kleine Kirche und Mönchszellen; von den Außenbereichen reicht der Blick steil hinunter in die Schlucht. Als aktives Kloster gilt eine Kleiderordnung (bedeckte Schultern und Knie), und der Zugang erfolgt über einen schmalen Pfad entlang der Felswand.",
     "terrain": "Schmaler, teils exponierter Felspfad zum Kloster; keine Absicherung an manchen Abschnitten.",
-    "combineWith": ["lousios-schlucht"],
+    "combineWith": ["lousios-schlucht", "karytaina"],
     "ticketInfo": null
   },
   {
@@ -118,7 +118,7 @@
       "level": 1,
       "note": "Abgelegen innerhalb der Schlucht, kaum besucht."
     },
-    "nearby": ["lousios-schlucht"],
+    "nearby": ["lousios-schlucht", "karytaina"],
     "tags": ["antike", "asklepieion", "schlucht"],
     "confidence": "low",
     "needsVerification": ["Exakte Koordinaten nicht unabhängig verifiziert", "Aktueller Erhaltungs-/Zugänglichkeitszustand"],
@@ -132,7 +132,7 @@
     "shadeAndHeat": "Teilweise Schatten durch die Schluchtlage.",
     "misconceptions": null,
     "readingHooks": null,
-    "combineWith": ["lousios-schlucht"],
+    "combineWith": ["lousios-schlucht", "karytaina"],
     "ticketInfo": null
   },
   {
@@ -149,7 +149,7 @@
       "level": 3,
       "note": "Stark auf Wochenendtourismus aus Athen ausgerichtet, entsprechend viele Cafés und Souvenirläden – aber echter Bergort, kein reines Feriendorf."
     },
-    "nearby": [],
+    "nearby": ["dimitsana", "lousios-schlucht"],
     "tags": ["bergort", "ski", "tannenwald"],
     "confidence": "medium",
     "needsVerification": ["Aktuelle Betriebszeiten des Skigebiets Mainalo"],
@@ -264,7 +264,7 @@
       "level": 1,
       "note": "Dramatische Kulisse, aber kaum touristisch erschlossen."
     },
-    "nearby": [],
+    "nearby": ["ancient-gortys", "moni-prodromou", "stemnitsa"],
     "tags": ["burg", "fraenkisch", "aussicht", "bruecke"],
     "confidence": "medium",
     "needsVerification": ["Aktuelle Zugänglichkeit/Begehbarkeit der Ruine"],
@@ -273,7 +273,7 @@
     "whyItMatters": "Karytaina kontrollierte als eine der zwölf ursprünglichen fränkischen Baronien den strategisch wichtigen Talweg entlang des Alfeios und damit eine der Hauptrouten durch die Peloponnes. Die auf einem steilen Felsen thronende Burg prägt bis heute die dramatische Silhouette des Orts – der griechische Schriftsteller Nikos Kazantzakis nannte den Ort in seinem Reisebuch 'Reise durch Morea' das 'Toledo der Peloponnes', ein Vergleich, der sich seither hartnäckig hält. Die mehrbögige Steinbrücke über den Alfeios am Fuß des Orts stammt allerdings erst aus osmanischer Zeit und ist damit deutlich jünger als die Burg selbst – ein Detail, das in Reiseführern gerne übersehen wird, wenn beide als 'mittelalterliches Ensemble' zusammengefasst werden.",
     "whatYouSee": "Von der Burg auf dem Felsen sind Ringmauerreste und ein zentraler Turmbereich erhalten, mit weitem Blick über das Alfeios-Tal. Unterhalb des Orts überspannt die historische Steinbrücke den Fluss.",
     "terrain": "Steiler, unbefestigter Aufstieg zur Burg; bei Nässe rutschig.",
-    "combineWith": [],
+    "combineWith": ["ancient-gortys", "moni-prodromou"],
     "ticketInfo": null
   },
   {
@@ -304,7 +304,7 @@
     "shadeAndHeat": "Innerhalb der Höhle ganzjährig kühl, unabhängig von der Außentemperatur.",
     "misconceptions": null,
     "readingHooks": null,
-    "combineWith": [],
+    "combineWith": ["tripoli"],
     "ticketInfo": null
   }
 ]

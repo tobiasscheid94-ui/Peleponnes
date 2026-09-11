@@ -97,7 +97,7 @@
       "level": 2,
       "note": "Vor allem bei griechischen Urlaubern beliebt, international kaum bekannt – entsprechend unaufgeregt."
     },
-    "nearby": [],
+    "nearby": ["katakolo"],
     "tags": ["sandstrand", "familienfreundlich"],
     "confidence": "medium",
     "needsVerification": ["Aktuelle Infrastruktur (Liegen/Tavernen)", "Parkmöglichkeiten"],
@@ -134,7 +134,7 @@
       "level": 2,
       "note": "Bekannt bei griechischen Kurgästen wegen der Thermalquellen, international kaum überlaufen."
     },
-    "nearby": [],
+    "nearby": ["olympia", "olympia-dorf"],
     "tags": ["thermalquelle", "see", "sandstrand", "kiefernwald"],
     "confidence": "medium",
     "needsVerification": ["Aktuelle Öffnungszeiten/Zugang zur Thermalhöhle", "Wasserqualität des Sees"],

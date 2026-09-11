@@ -405,6 +405,9 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   var habitats = (window.PELOPONNES_HABITATS && window.PELOPONNES_HABITATS.habitats) || {};
   var habitatsDisclaimer = (window.PELOPONNES_HABITATS && window.PELOPONNES_HABITATS.disclaimerUI) ||
     'Habitat-typische Arten, keine Sichtungsgarantie.';
+  var allRoutes = (window.PELOPONNES_ROUTES || []).slice();
+  var routesById = {};
+  allRoutes.forEach(function (r) { routesById[r.id] = r; });
 
   function matchesFilters(entry) {
     if (state.types.size && !state.types.has(entry.type)) return false;
@@ -693,6 +696,107 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   document.getElementById('tour-prev').addEventListener('click', function () { tourStep(-1); });
   document.getElementById('tour-next').addEventListener('click', function () { tourStep(1); });
   document.getElementById('tour-exit').addEventListener('click', exitTour);
+
+  // ---------- Tagesrouten ----------
+  // Wie beim Stadtrundgang: gestrichelte Linie ausdruecklich als Luftlinie
+  // gekennzeichnet, keine echte Routenfuehrung. Anders als der Stadtrundgang
+  // verweisen die Stationen hier auf vollwertige Eintraege (per entryId), die
+  // beim Antippen im normalen Bottom Sheet geoeffnet werden.
+
+  var routeLayer = L.layerGroup();
+  var routeTripState = null; // { routeId, stopIndex }
+  var routeBar = document.getElementById('route-bar');
+  var routeBarTitle = document.getElementById('route-bar-title');
+  var routeBarStop = document.getElementById('route-bar-stop');
+  var routeBarCounter = document.getElementById('route-bar-counter');
+
+  function routeStops(r) {
+    return r.stops.filter(function (s) { return entriesById[s.entryId]; });
+  }
+
+  function buildRouteMarkerIcon(num, isCurrent) {
+    return L.divIcon({
+      html: '<div class="route-marker' + (isCurrent ? ' is-current' : '') + '">' + num + '</div>',
+      className: 'route-marker-wrap',
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+  }
+
+  function startRoute(routeId) {
+    var r = routesById[routeId];
+    if (!r) return;
+    var stops = routeStops(r);
+    if (!stops.length) return;
+    if (tourState) exitTour();
+    closeSheet();
+    routesModal.hidden = true;
+    routeTripState = { routeId: routeId, stopIndex: 0 };
+    map.removeLayer(markerLayer);
+    routeLayer.clearLayers();
+    var latlngs = stops.map(function (s) { var e = entriesById[s.entryId]; return [e.coords[0], e.coords[1]]; });
+    L.polyline(latlngs, { color: '#2b6ca8', weight: 3, dashArray: '6,8', opacity: 0.85 }).addTo(routeLayer);
+    stops.forEach(function (s, i) {
+      var e = entriesById[s.entryId];
+      var marker = L.marker([e.coords[0], e.coords[1]], { icon: buildRouteMarkerIcon(i + 1, i === 0) });
+      marker.on('click', function () { routeTripState.stopIndex = i; updateRouteUI(); });
+      marker.addTo(routeLayer);
+    });
+    routeLayer.addTo(map);
+    routeBar.hidden = false;
+    updateRouteUI();
+  }
+
+  function updateRouteUI() {
+    if (!routeTripState) return;
+    var r = routesById[routeTripState.routeId];
+    var stops = routeStops(r);
+    var stop = stops[routeTripState.stopIndex];
+    var e = entriesById[stop.entryId];
+    routeBarTitle.textContent = r.title;
+    var driveNote = stop.driveMinutesFromPrevious === null || stop.driveMinutesFromPrevious === undefined
+      ? 'Start der Route'
+      : '~' + stop.driveMinutesFromPrevious + ' Min. Fahrt davor (Schätzung)';
+    routeBarStop.innerHTML = (routeTripState.stopIndex + 1) + '. ' + escapeHtml(e.name) +
+      '<span class="tour-bar__drive">' + escapeHtml(driveNote) + '</span>';
+    routeBarCounter.textContent = (routeTripState.stopIndex + 1) + '/' + stops.length;
+    var i = 0;
+    routeLayer.eachLayer(function (layer) {
+      if (layer instanceof L.Marker) {
+        layer.setIcon(buildRouteMarkerIcon(i + 1, i === routeTripState.stopIndex));
+        i++;
+      }
+    });
+    map.flyTo([e.coords[0], e.coords[1]], Math.max(map.getZoom(), 12), { duration: 0.5 });
+  }
+
+  function routeStep(delta) {
+    if (!routeTripState) return;
+    var r = routesById[routeTripState.routeId];
+    var n = routeStops(r).length;
+    routeTripState.stopIndex = Math.max(0, Math.min(n - 1, routeTripState.stopIndex + delta));
+    updateRouteUI();
+  }
+
+  function exitRoute() {
+    if (!routeTripState) return;
+    map.removeLayer(routeLayer);
+    if (!map.hasLayer(markerLayer)) markerLayer.addTo(map);
+    routeTripState = null;
+    routeBar.hidden = true;
+  }
+
+  function openRouteStopDetails() {
+    if (!routeTripState) return;
+    var r = routesById[routeTripState.routeId];
+    var stop = routeStops(r)[routeTripState.stopIndex];
+    openSheet(stop.entryId);
+  }
+
+  document.getElementById('route-prev').addEventListener('click', function () { routeStep(-1); });
+  document.getElementById('route-next').addEventListener('click', function () { routeStep(1); });
+  document.getElementById('route-exit').addEventListener('click', exitRoute);
+  document.getElementById('route-details').addEventListener('click', openRouteStopDetails);
 
   // ---------- Bottom Sheet ----------
 
@@ -1257,6 +1361,40 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     }
   });
 
+  // ---------- Tagesrouten-Modal ----------
+
+  var routesToggle = document.getElementById('routes-toggle');
+  var routesModal = document.getElementById('routes-modal');
+  var routesListEl = document.getElementById('routes-list');
+
+  function renderRoutesModal() {
+    if (!allRoutes.length) {
+      routesListEl.innerHTML = '<p class="species-note">Noch keine Tagesrouten vorhanden.</p>';
+      return;
+    }
+    routesListEl.innerHTML = allRoutes.map(function (r) {
+      var stops = routeStops(r);
+      var stopNames = stops.map(function (s) { return entriesById[s.entryId].name; }).join(' → ');
+      return '<div class="route-card">' +
+        '<h3>' + escapeHtml(r.title) + '</h3>' +
+        '<p class="species-note">' + escapeHtml(r.summary) + '</p>' +
+        '<p class="route-card__stops">' + escapeHtml(stopNames) + '</p>' +
+        '<p class="route-card__meta">' + stops.length + ' Stopps · ca. ' + r.totalDriveMinutes + ' Min. Fahrzeit (Schätzung) · ' + escapeHtml(r.driveTimeDisclaimer) + '</p>' +
+        '<button type="button" class="btn btn-primary" data-start-route="' + escapeHtml(r.id) + '">Route starten</button>' +
+        '</div>';
+    }).join('');
+  }
+
+  routesToggle.addEventListener('click', function () {
+    renderRoutesModal();
+    routesModal.hidden = false;
+  });
+  routesModal.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-start-route]');
+    if (!btn) return;
+    startRoute(btn.getAttribute('data-start-route'));
+  });
+
   // ---------- "Zu prüfen"-Modal ----------
 
   var needsVerifyBtn = document.getElementById('needs-verify-btn');
@@ -1296,6 +1434,8 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     groupIntoClusters: groupIntoClusters, favorites: favorites,
     visits: visits, setRating: setRating, recommendations: recommendations,
     similarEntries: similarEntries, startTour: startTour, tourStep: tourStep,
-    exitTour: exitTour, getTourState: function () { return tourState; }
+    exitTour: exitTour, getTourState: function () { return tourState; },
+    allRoutes: allRoutes, startRoute: startRoute, routeStep: routeStep,
+    exitRoute: exitRoute, getRouteState: function () { return routeTripState; }
   };
 })();

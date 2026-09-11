@@ -19,6 +19,7 @@
       ▤<span id="filter-count" class="count-dot" hidden>0</span>
     </button>
     <button id="favorites-toggle" class="icon-btn" type="button" aria-label="Favoriten">★</button>
+    <button id="routes-toggle" class="icon-btn" type="button" aria-label="Tagesrouten">⚑</button>
   </div>
 
   <div id="filter-panel" class="filter-panel" hidden>
@@ -90,6 +91,29 @@
         <button id="favorites-import" class="btn btn-primary" type="button">Importieren</button>
       </div>
     </div>
+  </div>
+
+  <div id="routes-modal" class="modal-overlay" hidden>
+    <div class="modal-sheet">
+      <button class="modal-close" data-close-modal type="button" aria-label="Schließen">✕</button>
+      <h2>Tagesrouten</h2>
+      <p class="species-note">Vorgeschlagene Tagesausflüge mit mehreren Stopps. Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Routenplanung.</p>
+      <div id="routes-list"></div>
+    </div>
+  </div>
+
+  <div id="route-bar" class="tour-bar" hidden>
+    <button id="route-exit" class="tour-bar__exit" type="button" aria-label="Route beenden">✕</button>
+    <div class="tour-bar__info">
+      <div class="tour-bar__title" id="route-bar-title"></div>
+      <div class="tour-bar__stop" id="route-bar-stop"></div>
+    </div>
+    <div class="tour-bar__nav">
+      <button id="route-prev" class="icon-btn" type="button" aria-label="Vorheriger Stopp">‹</button>
+      <span id="route-bar-counter" class="tour-bar__counter"></span>
+      <button id="route-next" class="icon-btn" type="button" aria-label="Nächster Stopp">›</button>
+    </div>
+    <button id="route-details" class="btn btn-primary route-bar__details" type="button">Details</button>
   </div>
 
   <div id="tour-bar" class="tour-bar" hidden>

@@ -227,7 +227,7 @@
     "whyItMatters": "Passava steht für die fränkische Zwischenherrschaft auf der Peloponnes nach der Vierten Kreuzfahrt: Nach der Eroberung durch die Kreuzritter 1204 wurde die Halbinsel unter westeuropäischen Adelsfamilien aufgeteilt, und Burgen wie Passava sicherten die neuen Herrschaftsgebiete gegen lokale und byzantinische Gegenwehr. Der Legende nach – philologisch nicht gesichert – soll der Name von 'pas avant' ('nicht weiter') herrühren, weil hier maniotischer Widerstand den fränkischen Vormarsch in die Tiefe der Mani gestoppt habe. Historisch belegt ist, dass die Region nach der Niederlage Wilhelms II. von Villehardouin gegen Byzanz 1259 bei Pelagonia unter wechselnden Einfluss geriet und später, während der osmanischen Zeit, erneut befestigt wurde, bevor die Manioten die Kontrolle über ihre eigene Region zurückgewannen. Passava ist damit ein kompaktes Beispiel dafür, wie viele Herrschaftsschichten sich auf der Peloponnes übereinanderlegen – fränkisch, byzantinisch, osmanisch, maniotisch –, ohne dass eine davon die Region je vollständig beherrschte.",
     "whatYouSee": "Erhalten sind Teile der äußeren Ringmauer und einzelne Turmansätze auf einem felsigen Hügel, dazwischen weitgehend Schutt und Vegetation. Keine intakten Innenräume oder Dächer. Der Wert liegt vor allem im Ausblick über die Straße von Gythio zur Mani und den Lakonischen Golf – ein guter Orientierungspunkt vor der Weiterfahrt in die Tiefe Mani.",
     "terrain": "Kurzer, unbefestigter Anstieg über losen Fels; bei Nässe rutschig.",
-    "combineWith": [],
+    "combineWith": ["gythio"],
     "ticketInfo": null
   },
   {
@@ -668,7 +668,7 @@
       "level": 1,
       "note": "Reiner Durchgangsort ohne nennenswerte touristische Inszenierung."
     },
-    "nearby": ["elafonisos"],
+    "nearby": ["elafonisos", "kap-maleas"],
     "tags": ["hafenstadt", "faehre"],
     "confidence": "medium",
     "needsVerification": ["Aktuelle Fährfahrpläne"],
@@ -692,7 +692,7 @@
       "level": 1,
       "note": "Abgelegen und ohne touristische Infrastruktur, kaum gezielt angefahren."
     },
-    "nearby": [],
+    "nearby": ["neapoli"],
     "tags": ["mythologie", "odyssee", "leuchtturm", "abgelegen"],
     "confidence": "medium",
     "needsVerification": ["Aktuelle Zugänglichkeit der Zufahrtsstraße zum Leuchtturm"],
@@ -705,7 +705,7 @@
     "shadeAndHeat": "Kein Schatten, oft starker Wind.",
     "misconceptions": null,
     "readingHooks": "Homers Odyssee, Buch 9 (Umrundung des Kap Maleas und Abdrift zu den Lotophagen).",
-    "combineWith": [],
+    "combineWith": ["neapoli"],
     "ticketInfo": null
   },
   {

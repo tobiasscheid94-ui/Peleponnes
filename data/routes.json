@@ -1,0 +1,175 @@
+[
+  {
+    "id": "route-pylos-bucht",
+    "title": "Die Bucht von Navarino: Geschichte, Natur, Strand",
+    "regions": ["messenien"],
+    "summary": "Kompakter Tag rund um Pylos: osmanisch-venezianische Festung, die berühmte Sichelbucht Voidokilia, die Ruine darüber und ein ruhiger Lagunenstrand zum Ausklang. Alle Stopps liegen dicht beieinander, viel Zeit bleibt für die Orte selbst statt fürs Fahren.",
+    "totalDriveMinutes": 15,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "pylos", "driveMinutesFromPrevious": null, "note": "Start am Hafenplatz Plateia Trion Navarchon."},
+      {"entryId": "niokastro", "driveMinutesFromPrevious": 0, "note": "Direkt oberhalb der Stadt."},
+      {"entryId": "voidokilia", "driveMinutesFromPrevious": 10, "note": "Am besten vormittags vor dem Hauptandrang."},
+      {"entryId": "palaiokastro", "driveMinutesFromPrevious": 0, "note": "Kurzer Aufstieg direkt über dem Strand."},
+      {"entryId": "gialova", "driveMinutesFromPrevious": 5, "note": "Ruhiger Ausklang am Lagunenstrand."}
+    ]
+  },
+  {
+    "id": "route-venezianische-festungen",
+    "title": "Venezianische Festungen: Methoni & Koroni",
+    "regions": ["messenien"],
+    "summary": "Die beiden 'Augen der Republik' Venedig an einem Tag – dazwischen der windige Strand von Finikounda. Methoni beeindruckt durch schiere Größe, Koroni durch sein gewachsenes Ortsbild mit Kloster in der Festung.",
+    "totalDriveMinutes": 45,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "methoni", "driveMinutesFromPrevious": null, "note": "Riesige Festungsanlage bis ins Meer hinaus."},
+      {"entryId": "finikounda", "driveMinutesFromPrevious": 15, "note": "Zwischenstopp, bei Wind gut für eine Pause am Wasser."},
+      {"entryId": "koroni", "driveMinutesFromPrevious": 25, "note": "Kleiner, gewachsener als Methoni."},
+      {"entryId": "zaga", "driveMinutesFromPrevious": 5, "note": "Langer, ruhiger Strand zum Ausklang."}
+    ]
+  },
+  {
+    "id": "route-kardamyli-taygetos",
+    "title": "Kardamyli & die Taygetos-Küste",
+    "regions": ["messenien"],
+    "summary": "Von der Regionalhauptstadt Kalamata über die Burg hinauf und an der dramatischen Taygetos-Küste entlang bis in die ruhigeren Buchten bei Stoupa. Für Wanderfreudige bietet sich der Einstieg in die Viros-Schlucht ab Kardamyli an (nicht in der Fahrzeit enthalten).",
+    "totalDriveMinutes": 50,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "kalamata", "driveMinutesFromPrevious": null, "note": "Start in der Stadt, z. B. mit dem Altstadt-Rundgang."},
+      {"entryId": "kalamata-burg", "driveMinutesFromPrevious": 0, "note": "Kurzer Abstecher auf den Burghügel."},
+      {"entryId": "kardamyli", "driveMinutesFromPrevious": 40, "note": "Leigh-Fermor-Haus und Altes Kardamyli."},
+      {"entryId": "stoupa", "driveMinutesFromPrevious": 10, "note": "Belebter Familienstrand."},
+      {"entryId": "kalogria-mani", "driveMinutesFromPrevious": 0, "note": "Ruhigere Alternative in Gehweite von Stoupa."}
+    ]
+  },
+  {
+    "id": "route-tiefe-mani",
+    "title": "Tiefe Mani: Turmhäuser und Weltende",
+    "regions": ["lakonien"],
+    "summary": "Ganztägige Fahrt in die abgelegenste Ecke der Peloponnes: das Geisterdorf Vathia, das antike Poseidon-Heiligtum an Kap Tenaro und einsame Buchten dahinter. Wegen der langen Strecke bleibt wenig Zeit für lange Stopps unterwegs – früh starten.",
+    "totalDriveMinutes": 75,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "areopoli", "driveMinutesFromPrevious": null, "note": "Historisches Zentrum der Mani, guter Startpunkt."},
+      {"entryId": "limeni", "driveMinutesFromPrevious": 5, "note": "Kurzer Abstecher zum Fischerhafen."},
+      {"entryId": "vathia", "driveMinutesFromPrevious": 50, "note": "Fast menschenleeres Turmhausdorf."},
+      {"entryId": "kap-tenaro", "driveMinutesFromPrevious": 10, "note": "Rund 30 Min. Fußweg zum Leuchtturm eingerechnet."},
+      {"entryId": "porto-kagio", "driveMinutesFromPrevious": 5, "note": "Geschützte Bucht zum Abkühlen."},
+      {"entryId": "marmari-tenaro", "driveMinutesFromPrevious": 5, "note": "Für Schnorchler, kaum touristisch erschlossen."}
+    ]
+  },
+  {
+    "id": "route-diros-gythio",
+    "title": "Diros-Höhlen, Kelefa & Gythio",
+    "regions": ["lakonien"],
+    "summary": "Die Bootsfahrt durch die Diros-Höhlen als Herzstück, dazwischen eine wenig besuchte osmanische Festungsruine mit Aussicht, zum Abschluss Hafenstadt und Strand von Gythio.",
+    "totalDriveMinutes": 55,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "areopoli", "driveMinutesFromPrevious": null, "note": "Start, ggf. mit Frühstück am Hauptplatz."},
+      {"entryId": "diros-hoehlen", "driveMinutesFromPrevious": 5, "note": "In der Hochsaison können Wartezeiten auf die Bootstour entstehen."},
+      {"entryId": "kelefa", "driveMinutesFromPrevious": 15, "note": "Frei zugänglich, kaum Infrastruktur."},
+      {"entryId": "gythio", "driveMinutesFromPrevious": 30, "note": "Spaziergang zum Inselchen Kranai."},
+      {"entryId": "mavrovouni", "driveMinutesFromPrevious": 5, "note": "Langer Sandstrand zum Ausklang."}
+    ]
+  },
+  {
+    "id": "route-sparta-mystras",
+    "title": "Sparta, Mystras & Menelaion",
+    "regions": ["lakonien"],
+    "summary": "Kompakter Geschichtstag: das kaum sichtbare antike Sparta, die eindrucksvolle byzantinische Geisterstadt Mystras und ein stiller Zwischenstopp am bronzezeitlichen Menelaion mit Blick über das Evrotas-Tal.",
+    "totalDriveMinutes": 15,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "sparta", "driveMinutesFromPrevious": null, "note": "Moderne Planstadt von 1834, guter Ausgangspunkt."},
+      {"entryId": "antikes-sparta", "driveMinutesFromPrevious": 0, "note": "Akropolis-Areal am Nordrand der Stadt."},
+      {"entryId": "mystras", "driveMinutesFromPrevious": 5, "note": "Für den vollständigen Rundgang 2,5-3,5 Std. einplanen."},
+      {"entryId": "menelaion", "driveMinutesFromPrevious": 10, "note": "Kurzer, ruhiger Abstecher zum Abschluss."}
+    ]
+  },
+  {
+    "id": "route-suedostspitze",
+    "title": "Neapoli, Elafonisos & das versunkene Pavlopetri",
+    "regions": ["lakonien"],
+    "summary": "Die äußerste Südostspitze der Peloponnes: kurze Fähre zur Insel Elafonisos, der karibisch anmutende Strand Simos und die schnorchelnd erkundbaren Ruinen von Pavlopetri – einer der ältesten bekannten versunkenen Siedlungen der Welt. Das windumtoste Kap Maleas liegt in Fahrweite von Neapoli, aber abseits der eigentlichen Route.",
+    "totalDriveMinutes": 60,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung; die Überfahrt nach Elafonisos (Fähre ab Pounta) ist hier nicht mit eingerechnet.",
+    "stops": [
+      {"entryId": "monemvasia", "driveMinutesFromPrevious": null, "note": "Start am Vormittag, Felsenstadt vor der weiteren Fahrt."},
+      {"entryId": "neapoli", "driveMinutesFromPrevious": 35, "note": "Fähranleger nach Elafonisos."},
+      {"entryId": "elafonisos", "driveMinutesFromPrevious": 15, "note": "Kurze Fährüberfahrt ab Pounta, hier nicht mitgerechnet."},
+      {"entryId": "simos", "driveMinutesFromPrevious": 5, "note": "Bekanntester Strand der Insel."},
+      {"entryId": "pavlopetri", "driveMinutesFromPrevious": 5, "note": "Nur mit eigener Schnorchelausrüstung erlebbar."}
+    ]
+  },
+  {
+    "id": "route-lousios-bergdoerfer",
+    "title": "Arkadische Bergdörfer & die Lousios-Schlucht",
+    "regions": ["arkadien"],
+    "summary": "Zwei steinerne Bergdörfer mit sehr unterschiedlichem Charakter, dazwischen die dramatische Lousios-Schlucht mit dem in die Felswand gebauten Kloster Prodromou und dem abgelegenen antiken Asklepieion von Gortys. Für die Schlucht selbst zusätzlich mehrere Stunden Wanderzeit einplanen.",
+    "totalDriveMinutes": 30,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung; reine Fahrzeiten zwischen den Trailheads, ohne Wanderzeit in der Schlucht selbst.",
+    "stops": [
+      {"entryId": "dimitsana", "driveMinutesFromPrevious": null, "note": "Freilichtmuseum der Wasserkraft am Ortsrand."},
+      {"entryId": "stemnitsa", "driveMinutesFromPrevious": 10, "note": "Deutlich ruhiger als Dimitsana."},
+      {"entryId": "lousios-schlucht", "driveMinutesFromPrevious": 5, "note": "Einstieg in die Schlucht, mehrere Stunden Wanderzeit."},
+      {"entryId": "moni-prodromou", "driveMinutesFromPrevious": 5, "note": "In die Felswand gebautes, aktives Kloster."},
+      {"entryId": "ancient-gortys", "driveMinutesFromPrevious": 10, "note": "Nur zu Fuß in der Schlucht erreichbar."}
+    ]
+  },
+  {
+    "id": "route-arkadische-antike",
+    "title": "Arkadische Antike: Megalopolis, Bassae & Karytaina",
+    "regions": ["arkadien"],
+    "summary": "Drei sehr unterschiedliche antike und mittelalterliche Orte abseits der großen Reiserouten: die von Epaminondas gegründete Bundeshauptstadt Megalopolis, der abgelegene, unter einem Schutzzelt stehende Apollontempel von Bassae und die fränkische Burg von Karytaina hoch über dem Alfeios.",
+    "totalDriveMinutes": 65,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung; die Zufahrt nach Bassae ist kurvenreich und dauert bei winterlichen Bedingungen deutlich länger.",
+    "stops": [
+      {"entryId": "megalopoli", "driveMinutesFromPrevious": null, "note": "Fundamente des größten Theaters der griechischen Antike."},
+      {"entryId": "bassae", "driveMinutesFromPrevious": 40, "note": "Lange, kurvenreiche Anfahrt ohne Infrastruktur unterwegs."},
+      {"entryId": "karytaina", "driveMinutesFromPrevious": 25, "note": "Kazantzakis' 'Toledo der Peloponnes'."}
+    ]
+  },
+  {
+    "id": "route-mykenische-welt",
+    "title": "Mykenische Welt: Nemea, Mykene, Tiryns & Nafplio",
+    "regions": ["korinthia", "argolis"],
+    "summary": "Von den Nemeischen Spielen über die Palastburg Agamemnons bis zu den Zyklopenmauern von Tiryns – ein dichter Antike-Tag, der in der venezianischen Hafenstadt Nafplio zum Abendessen endet.",
+    "totalDriveMinutes": 55,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "nemea", "driveMinutesFromPrevious": null, "note": "Stadion mit begehbarem Athletentunnel."},
+      {"entryId": "mykene", "driveMinutesFromPrevious": 20, "note": "Vormittags oft mit Busgruppen, früh starten lohnt sich."},
+      {"entryId": "tiryns", "driveMinutesFromPrevious": 30, "note": "Deutlich weniger besucht als Mykene."},
+      {"entryId": "nafplio", "driveMinutesFromPrevious": 5, "note": "Guter Ort zum Ausklingen des Tages."}
+    ]
+  },
+  {
+    "id": "route-kalavryta-chelmos",
+    "title": "Kalavryta, Chelmos & die Vouraikos-Schlucht",
+    "regions": ["achaia"],
+    "summary": "Bergtag in Achaia: die Zahnradbahn durch die Vouraikos-Schlucht, das Gedenken an das Massaker von 1943 in Kalavryta, der zweithöchste Berg der Peloponnes mit Observatorium und der seit der Antike mit dem Styx gleichgesetzte Wasserfall Mavroneri.",
+    "totalDriveMinutes": 55,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung; für Mavroneri zusätzlich mehrere Stunden Wanderzeit einplanen.",
+    "stops": [
+      {"entryId": "diakofto", "driveMinutesFromPrevious": null, "note": "Alternativ die Zahnradbahn statt der Straße nehmen."},
+      {"entryId": "kalavryta", "driveMinutesFromPrevious": 35, "note": "Gedenkmuseum im ehemaligen Schulgebäude."},
+      {"entryId": "chelmos", "driveMinutesFromPrevious": 5, "note": "Im Winter Skibetrieb, im Sommer weite Ausblicke."},
+      {"entryId": "mavroneri-styx", "driveMinutesFromPrevious": 15, "note": "Nur nach mehrstündiger Wanderung ab Peristera erreichbar."}
+    ]
+  },
+  {
+    "id": "route-olympia-kueste",
+    "title": "Olympia & die Ionische Küste",
+    "regions": ["ilia"],
+    "summary": "Die Geburtsstätte der Olympischen Spiele am Vormittag, wenn es noch kühler ist, danach hinunter zum Fischerdorf und Kreuzfahrthafen Katakolo mit seinem französischen Leuchtturm.",
+    "totalDriveMinutes": 50,
+    "driveTimeDisclaimer": "Fahrzeiten sind grobe Schätzungen auf Basis der Straßenverbindung, keine Live-Verkehrsdaten oder Routenplanung.",
+    "stops": [
+      {"entryId": "olympia", "driveMinutesFromPrevious": null, "note": "2,5-3,5 Std. für Ausgrabungsstätte und Museum einplanen."},
+      {"entryId": "olympia-dorf", "driveMinutesFromPrevious": 0, "note": "Die beiden Olympia-Museen im Ort."},
+      {"entryId": "katakolo", "driveMinutesFromPrevious": 50, "note": "An Kreuzfahrttagen deutlich belebter."}
+    ]
+  }
+]

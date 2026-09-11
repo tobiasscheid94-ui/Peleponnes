@@ -197,11 +197,56 @@ function checkWalkingTour(e, file) {
   });
 }
 
+function checkRoutes(allIds) {
+  const routesPath = path.join(DATA_DIR, 'routes.json');
+  if (!fs.existsSync(routesPath)) return;
+  const routes = loadJson(routesPath);
+  if (!Array.isArray(routes)) {
+    if (routes !== null) errors.push(`[ERROR] routes.json :: Datei muss ein Array von Routen sein.`);
+    return;
+  }
+  const routeIds = new Set();
+  for (const r of routes) {
+    const file = 'routes.json';
+    if (!isNonEmptyString(r.id)) { err(r.id, file, `Route ohne gueltige 'id'.`); continue; }
+    if (routeIds.has(r.id)) err(r.id, file, `Doppelte Routen-id.`);
+    routeIds.add(r.id);
+    if (!isNonEmptyString(r.title)) err(r.id, file, `'title' fehlt oder leer.`);
+    if (!isNonEmptyString(r.summary)) err(r.id, file, `'summary' fehlt oder leer.`);
+    if (!Array.isArray(r.regions) || !r.regions.length) err(r.id, file, `'regions' muss ein nicht-leeres Array sein.`);
+    if (!isNonEmptyString(r.driveTimeDisclaimer)) err(r.id, file, `'driveTimeDisclaimer' fehlt oder leer – Fahrzeiten muessen explizit als Schaetzung gekennzeichnet sein.`);
+    if (!Number.isInteger(r.totalDriveMinutes) || r.totalDriveMinutes < 0) {
+      err(r.id, file, `'totalDriveMinutes' muss eine nicht-negative Ganzzahl sein.`);
+    }
+    if (!Array.isArray(r.stops) || r.stops.length < 2) {
+      err(r.id, file, `'stops' muss mindestens 2 Stationen enthalten.`);
+      continue;
+    }
+    let sumMinutes = 0;
+    r.stops.forEach((s, i) => {
+      if (!isNonEmptyString(s.entryId)) { err(r.id, file, `stops[${i}].entryId fehlt oder leer.`); return; }
+      if (!allIds.has(s.entryId)) err(r.id, file, `stops[${i}].entryId '${s.entryId}' existiert nicht in den Regions-Daten.`);
+      if (i === 0) {
+        if (s.driveMinutesFromPrevious !== null) err(r.id, file, `stops[0].driveMinutesFromPrevious muss null sein (kein Vorgaenger).`);
+      } else {
+        if (!Number.isInteger(s.driveMinutesFromPrevious) || s.driveMinutesFromPrevious < 0) {
+          err(r.id, file, `stops[${i}].driveMinutesFromPrevious muss eine nicht-negative Ganzzahl sein.`);
+        } else {
+          sumMinutes += s.driveMinutesFromPrevious;
+        }
+      }
+    });
+    if (Number.isInteger(r.totalDriveMinutes) && sumMinutes !== r.totalDriveMinutes) {
+      err(r.id, file, `totalDriveMinutes (${r.totalDriveMinutes}) stimmt nicht mit der Summe der stops[].driveMinutesFromPrevious (${sumMinutes}) ueberein.`);
+    }
+  }
+}
+
 function main() {
   const habitatsPath = path.join(DATA_DIR, 'habitats.json');
   const habitats = fs.existsSync(habitatsPath) ? loadJson(habitatsPath) || {} : {};
 
-  const files = fs.readdirSync(DATA_DIR).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json'].includes(f));
+  const files = fs.readdirSync(DATA_DIR).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json', 'routes.json'].includes(f));
 
   if (files.length === 0) {
     console.log('Keine Regions-Datendateien in /data gefunden.');
@@ -244,6 +289,8 @@ function main() {
       if (!allIds.has(refId)) warn(entry.id, file, `combineWith-Referenz '${refId}' existiert (noch) nicht.`);
     }
   }
+
+  checkRoutes(allIds);
 
   console.log(`Geprueft: ${allEntries.length} Eintraege in ${files.length} Dateien.\n`);
 
