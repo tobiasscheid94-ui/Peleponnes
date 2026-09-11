@@ -13,7 +13,7 @@
       "level": 3,
       "note": "Stark frequentiert, vor allem vormittags mit Busgruppen aus Nafplio und Athen; der UNESCO-Welterbestatus zieht Massen an, aber die Substanz vor Ort ist real und nicht künstlich überinszeniert."
     },
-    "nearby": [],
+    "nearby": ["tiryns"],
     "tags": ["mykenisch", "unesco", "wanderung-kurz", "museum", "ilias"],
     "confidence": "high",
     "needsVerification": [
@@ -36,7 +36,7 @@
     "shadeAndHeat": "Fast durchgehend schattenlos auf exponiertem Hügel. Besuch früh vormittags oder ab späterem Nachmittag deutlich erträglicher.",
     "misconceptions": "Die von Schliemann gefundene sogenannte 'Maske des Agamemnon' stammt aus einer Bestattung, die etwa 300 Jahre vor der sagenhaften Zeit des Trojanischen Krieges datiert – sie kann also nicht Agamemnons Totenmaske sein, wird in populären Darstellungen aber oft so präsentiert.",
     "readingHooks": "Homers Ilias (Agamemnon als Heerführer der Achaier), Pausanias' Beschreibung Griechenlands (Buch II), sowie Heinrich Schliemanns Ausgrabungsberichte von 1876.",
-    "combineWith": ["nafplio"],
+    "combineWith": ["nafplio", "tiryns"],
     "ticketInfo": null
   },
   {
@@ -53,7 +53,7 @@
       "level": 4,
       "note": "Die Altstadt ist bewusst auf Flaniertourismus ausgelegt und an Wochenenden sowie Feiertagen stark überlaufen; abseits der Hauptgassen und außerhalb der Stoßzeiten bleibt die Bausubstanz aber genuin und die Stadt bleibt liebenswert."
     },
-    "nearby": ["mykene"],
+    "nearby": ["mykene", "tiryns", "epidauros", "arvanitia", "karathona"],
     "tags": ["venezianisch", "festung", "hafenstadt", "spazieren", "abendstimmung"],
     "confidence": "medium",
     "needsVerification": [
@@ -76,7 +76,243 @@
       "Bummel durch die Altstadtgassen rund um den Syntagma-Platz"
     ],
     "parking": "Die Altstadt ist zu großen Teilen Fußgängerzone; Parkmöglichkeiten bestehen am Hafen und an den Zufahrtsstraßen, in der Hochsaison ist es dort eng.",
-    "foodScene": "Dichte Taverna- und Café-Kulisse entlang der Uferpromenade und in der Altstadt. Die unmittelbar am Wasser sichtbaren Terrassen sind auf Laufkundschaft ausgerichtet; Lokale in den ruhigeren Seitengassen abseits der Hauptachse lohnen eher einen Blick auf die Karte, bevor man sich setzt.",
-    "timeNeeded": "Halber bis ganzer Tag"
+    "foodScene": "Dichte Taverna- und Café-Kulisse entlang der Uferpromenade und in der Altstadt. Die unmittelbar am Wasser sichtbaren Terrassen sind auf Laufkundschaft ausgerichtet; Lokale in den ruhigeren Seitengassen abseits der Hauptachse lohnen eher einen Blick auf die Karte, bevor man sich setzt."
+  },
+  {
+    "id": "epidauros",
+    "name": "Epidauros",
+    "nameGr": "Επίδαυρος",
+    "type": "site",
+    "region": "argolis",
+    "coords": [37.5961, 23.0792],
+    "coordSource": "exact",
+    "summary": "Am besten erhaltenes antikes Theater Griechenlands mit legendärer Akustik, neben dem bedeutendsten Heilheiligtum der Antike – UNESCO-Welterbe seit 1988.",
+    "timeNeeded": "2–3 Std.",
+    "touristTrapRisk": {
+      "level": 3,
+      "note": "Stark besuchte, weltberühmte Stätte mit entsprechendem Andrang, vor allem bei Bus- und Tagesausflugsgruppen – aber die Substanz (Theater, Heiligtum) ist ungeschmälert real."
+    },
+    "nearby": ["nafplio", "tiryns"],
+    "tags": ["antike", "unesco", "theater", "heilkult"],
+    "confidence": "high",
+    "needsVerification": ["Aktuelle Öffnungszeiten/Ticketpreise", "Ob im antiken Theater noch Aufführungen stattfinden (Festivalbetrieb)"],
+    "epoch": ["klassisch", "hellenistisch", "roemisch"],
+    "dating": "Theater der Überlieferung nach spätes 4. Jh. v. Chr. erbaut (Pausanias schreibt es dem Baumeister Polykleitos dem Jüngeren zu – eine literarische, nicht unabhängig bestätigte Zuschreibung), im 2. Jh. v. Chr. erweitert. Asklepios-Heiligtum vom 6. Jh. v. Chr. bis in römische Zeit in Betrieb.",
+    "whyItMatters": "Epidauros war in der Antike das bedeutendste Heiligtum des Heilgotts Asklepios und ein Wallfahrtsort, an dem Kranke im Rahmen der sogenannten Inkubation im Abaton übernachteten, in der Hoffnung, der Gott würde ihnen im Traum erscheinen und sie heilen oder eine Behandlung eingeben. Direkt daneben liegt das mit Abstand berühmteste antike Theater Griechenlands, das bis heute nahezu vollständig erhalten ist und für seine Akustik gerühmt wird. Diese Berühmtheit braucht allerdings eine Präzisierung: Eine kontrollierte akustische Studie (Georgia Tech, veröffentlicht ca. 2017) zeigte, dass ein Flüstern oder eine fallende Münze auf der Bühne nur bis etwa zur Hälfte der Sitzreihen hörbar ist, nicht bis in die oberste Reihe – die oft kolportierte Legende vom bis nach ganz oben hörbaren Flüstern ist damit übertrieben, während laute, projizierte Sprache tatsächlich bis in die letzten Reihen trägt. Zusammen mit dem Heiligtum wurde die gesamte Anlage 1988 als UNESCO-Welterbe eingetragen. Die Kombination aus Heilkult und Theaterbau war in der Antike kein Zufall: Aufführungen und Festspiele galten selbst als Teil des Heilungsprozesses, eingebettet in ein umfassenderes Verständnis von Gesundheit als Zusammenspiel von Körper, Geist und religiöser Praxis.",
+    "whatYouSee": "Das Theater mit seinen weit über 12.000 gut erhaltenen Sitzplätzen (ursprünglich kleiner, im 2. Jh. v. Chr. auf die heutige Größe erweitert) dominiert den Besuch; viele Besucher testen selbst, wie weit ihre Stimme von der Bühne aus trägt. Im angrenzenden Heiligtumsbezirk sind Fundamente mehrerer Tempel, des runden Tholos-Baus und des Abaton (Schlafsaals für die Inkubation) erhalten, dazu ein Museum mit Weihgaben und medizinischen Instrumenten. Anders als beim Theater ist vom übrigen Heiligtum vor allem Grundriss-Archäologie zu sehen, kaum aufgehende Bausubstanz.",
+    "walkthrough": [
+      {"stop": "Theater", "note": "Am besten erhaltenes antikes Theater Griechenlands; Akustik-Legende teils übertrieben (siehe oben)."},
+      {"stop": "Abaton", "note": "Schlafsaal für die rituelle Inkubation der Heilsuchenden."},
+      {"stop": "Museum", "note": "Weihgaben und antike medizinische Instrumente."}
+    ],
+    "museumOnSite": true,
+    "terrain": "Weitläufiges, überwiegend ebenes Gelände; die Theatersitzreihen selbst sind steil.",
+    "shadeAndHeat": "Kaum Schatten im Theater und im offenen Heiligtumsbezirk.",
+    "misconceptions": "Die Behauptung, im Theater sei ein Flüstern oder eine fallende Münze bis in die letzte Reihe hörbar, gilt einer akustischen Studie zufolge nur für laute, projizierte Sprache – leise Geräusche tragen nachweislich nur bis etwa zur Hälfte der Sitzreihen.",
+    "readingHooks": "Pausanias' Beschreibung Griechenlands (Buch II) zum Heiligtum und zur Zuschreibung des Theaters an Polykleitos den Jüngeren.",
+    "combineWith": ["tiryns"],
+    "ticketInfo": null
+  },
+  {
+    "id": "tiryns",
+    "name": "Tiryns",
+    "nameGr": "Τίρυνς",
+    "type": "site",
+    "region": "argolis",
+    "coords": [37.5930, 22.7932],
+    "coordSource": "exact",
+    "summary": "Mykenische Zitadelle mit gewaltigen 'zyklopischen' Mauern, gemeinsam mit Mykene 1999 UNESCO-Welterbe.",
+    "timeNeeded": "1–1,5 Std.",
+    "touristTrapRisk": {
+      "level": 2,
+      "note": "Deutlich weniger besucht als Mykene, obwohl nur wenige Kilometer entfernt und architektonisch ebenso eindrücklich."
+    },
+    "nearby": ["nafplio", "epidauros", "mykene"],
+    "tags": ["mykenisch", "unesco", "zyklopenmauern", "herakles"],
+    "confidence": "high",
+    "needsVerification": ["Aktuelle Öffnungszeiten"],
+    "epoch": ["mykenisch"],
+    "dating": "Hauptbefestigungsphasen spätbronzezeitlich, etwa 14.–13. Jh. v. Chr.",
+    "whyItMatters": "Tiryns zeigt mit seinen sogenannten zyklopischen Mauern – benannt nach der antiken Vorstellung, nur die einäugigen Zyklopen hätten derart gewaltige Steinblöcke bewegen können – eine der eindrücklichsten Festungsarchitekturen der mykenischen Welt. Die Mauern sind an manchen Stellen mehrere Meter dick, an Abschnitten mit eingebauten Galerien und Kammern bis zu 13–17 Meter. Gemeinsam mit Mykene wurde die Stätte 1999 als UNESCO-Welterbe eingetragen. Mythologisch wird Tiryns vor allem mit Herakles verbunden – allerdings nicht in erster Linie als sein Geburtsort, wie gelegentlich behauptet wird (die vorherrschende antike Überlieferung verortet seine Geburt in Theben), sondern als der Ort, an dem er im Dienst des Königs Eurystheus die Zwölf Arbeiten zu vollbringen hatte. Diese Unterscheidung wird in Reiseführern gelegentlich verwischt. Im direkten Vergleich mit dem nahen Mykene zeigt Tiryns eindrücklich, dass mykenische Machtzentren nicht zwangsläufig auf Hügeln lagen: Die Zitadelle erhebt sich nur wenig über die umliegende Ebene und musste ihre Verteidigungskraft fast ausschließlich aus der schieren Masse der Mauern beziehen, nicht aus natürlicher Hanglage.",
+    "whatYouSee": "Die massiven Ringmauern sind über weite Strecken erhalten, teils mit begehbaren Galerien im Mauerinneren. Vom Oberburg-Bereich sind Fundamente des Palastkomplexes sichtbar, deutlich kleiner und weniger vollständig als in Mykene. Der Gesamteindruck der Anlage lebt vor allem von der schieren Masse der Mauern, weniger von Einzelbauten. Die begehbaren Galerien im Mauerinneren, mit ihren charakteristischen falschen Kuppelgewölben, vermitteln am unmittelbarsten einen Eindruck von der bautechnischen Meisterschaft der mykenischen Baumeister. Von der Oberburg reicht der Blick weit über die flache Argolis-Ebene bis zum Golf von Nafplio, was die einstige strategische Position der Zitadelle nachvollziehbar macht.",
+    "walkthrough": [
+      {"stop": "Ringmauer mit Galerien", "note": "Begehbare Kammern im Inneren der bis zu 17 m dicken Mauerabschnitte."},
+      {"stop": "Oberburg/Palastbereich", "note": "Fundamente des mykenischen Palastkomplexes."}
+    ],
+    "museumOnSite": false,
+    "terrain": "Kompaktes, aber unebenes Gelände mit Stufen und Mauerdurchgängen.",
+    "shadeAndHeat": "Kaum Schatten.",
+    "misconceptions": "Tiryns wird gelegentlich als Geburtsort des Herakles bezeichnet – die vorherrschende antike Überlieferung nennt dafür Theben; solide belegt ist dagegen Tiryns als Schauplatz seiner Dienstzeit bei Eurystheus und der Zwölf Arbeiten.",
+    "readingHooks": "Der Mythos von Herakles' Zwölf Arbeiten im Dienst des Eurystheus.",
+    "combineWith": ["epidauros", "mykene"],
+    "ticketInfo": null
+  },
+  {
+    "id": "tolo",
+    "name": "Tolo",
+    "nameGr": "Τολό",
+    "type": "beach",
+    "region": "argolis",
+    "coords": [37.5180, 22.8530],
+    "coordSource": "approx",
+    "summary": "Familienfreundlicher Badeort nahe Nafplio mit geschützter Bucht und vorgelagerten Inseln Romvi und Koronisi.",
+    "timeNeeded": "2–4 Std.",
+    "touristTrapRisk": {
+      "level": 3,
+      "note": "Klassischer Familien-Badeort mit entsprechender touristischer Infrastruktur, aber ruhiger als die großen Küstenorte weiter südlich."
+    },
+    "nearby": ["nafplio", "karathona"],
+    "tags": ["sandstrand", "familienfreundlich", "boot"],
+    "confidence": "medium",
+    "needsVerification": ["Aktuelle Bootsausflüge zu den Inseln"],
+    "surface": "feiner Sand",
+    "seabed": "Sand",
+    "entry": "flach abfallend",
+    "barefootFriendly": true,
+    "crowding": {"peakSeason": 4, "shoulderSeason": 2, "timeOfDayNote": null},
+    "shade": "kein Schatten",
+    "windExposure": "Geschützte Bucht, dadurch meist ruhiges Wasser.",
+    "hazards": [],
+    "snorkeling": {
+      "rating": 1, "habitat": "sandflach", "visibility": null,
+      "speciesLikely": ["Ährenfische (Atherina spp.)", "Meeräschen (Mugilidae)"],
+      "speciesCaution": ["Petermännchen (Trachinus draco) – vergraben sich im Sand, schmerzhafter Stich"]
+    },
+    "facilities": {"sunbeds": "Reihenbetrieb", "taverna": "mehrere", "wc": null, "freshwater": null, "parking": null},
+    "access": {"mode": "direkt am Parkplatz", "minutesFromParking": 2, "roadQuality": null, "difficulty": "leicht"},
+    "nudistTolerated": null,
+    "bestTime": "Ganztägig geeignet; die vorgelagerten Inseln Romvi und Koronisi sind per Bootsausflug erreichbar.",
+    "history": null
+  },
+  {
+    "id": "arvanitia",
+    "name": "Arvanitia",
+    "nameGr": "Αρβανιτιά",
+    "type": "beach",
+    "region": "argolis",
+    "coords": [37.5630, 22.7950],
+    "coordSource": "approx",
+    "summary": "Kleine, blaue-Flagge-zertifizierte Badebucht direkt unterhalb der Festung Palamidi, Startpunkt des Küstenwegs nach Karathona.",
+    "timeNeeded": "45–90 Min.",
+    "touristTrapRisk": {
+      "level": 3,
+      "note": "Zentrumsnah und entsprechend belebt, aber ein echter, kleiner Naturstrand, kein künstlich angelegtes Bad."
+    },
+    "nearby": ["nafplio", "karathona"],
+    "tags": ["kiesstrand", "schnorcheln", "spazierweg"],
+    "confidence": "medium",
+    "needsVerification": ["Exakte Koordinaten (Quelle niedrigerer Zuverlässigkeit)", "Aktueller Blaue-Flagge-Status"],
+    "surface": "Kies",
+    "seabed": "Fels",
+    "entry": "Felseinstieg",
+    "barefootFriendly": false,
+    "crowding": {"peakSeason": 4, "shoulderSeason": 2, "timeOfDayNote": "Wegen der Zentrumsnähe (ca. 800 m/10–15 Gehminuten von Nafplios Hauptplatz) in der Hochsaison schnell voll."},
+    "shade": "kein Schatten",
+    "windExposure": "Geschützte Lage unterhalb des Palamidi-Felsens.",
+    "hazards": [],
+    "snorkeling": {
+      "rating": 3, "habitat": "felskueste", "visibility": null,
+      "speciesLikely": ["Geißbrassen (Diplodus spp.)", "Lippfische (Labridae, u.a. Meerjunker)"],
+      "speciesCaution": ["Drachenkopf (Scorpaena spp.) – gut getarnt, giftige Stacheln", "Seeigel (Paracentrotus lividus) in Spalten und Randbereichen"]
+    },
+    "facilities": {"sunbeds": "wenige", "taverna": "eine am Zugang", "wc": null, "freshwater": null, "parking": null},
+    "access": {"mode": "Fussweg", "minutesFromParking": 10, "roadQuality": null, "difficulty": "leicht"},
+    "nudistTolerated": null,
+    "bestTime": "Früh morgens vor dem Hauptandrang aus der nahen Altstadt.",
+    "history": null
+  },
+  {
+    "id": "lerna",
+    "name": "Lerna",
+    "nameGr": "Λέρνα",
+    "type": "site",
+    "region": "argolis",
+    "coords": [37.5500, 22.7170],
+    "coordSource": "approx",
+    "summary": "Bronzezeitliche Ausgrabungsstätte mit dem 'Haus der Ziegel' – und antike Verortung des Mythos der Lernäischen Hydra.",
+    "timeNeeded": "30–45 Min.",
+    "touristTrapRisk": {
+      "level": 1,
+      "note": "Kaum besucht, keine touristische Infrastruktur."
+    },
+    "nearby": ["argos"],
+    "tags": ["antike", "fruehbronzezeit", "mythologie", "herakles"],
+    "confidence": "medium",
+    "needsVerification": ["Aktuelle Öffnungszeiten und Eintrittspreis", "Koordinaten nur auf Bogenminute genau, nicht praezise verifiziert"],
+    "epoch": [],
+    "dating": "'Haus der Ziegel' frühhelladisch, ca. 2500–2300 v. Chr.; durch Feuer im 22. Jh. v. Chr. zerstört und danach von der nachfolgenden Bevölkerung mit einem Grabhügel überdeckt statt überbaut.",
+    "whyItMatters": "Das 'Haus der Ziegel' von Lerna ist für seine Zeit ein außergewöhnlich monumentaler Bau (ca. 12×25 m, zweistöckig) und vor allem für seine gebrannten Tondachziegel bekannt – eine der frühesten bekannten Verwendungen von Ziegeldächern in Griechenland, während vergleichbare Bauten der Zeit meist mit Stroh oder Lehm gedeckt waren. Die antike Verortung des Mythos der Lernäischen Hydra – eines der zwölf Arbeiten des Herakles – an genau diesem Ort ist selbst bereits antik belegt, unter anderem durch den Geografen Strabon; die Verortung ist also alt und gut bezeugt, auch wenn der Mythos selbst naturgemäß nicht historisch verifizierbar ist. Dass die Bewohner der Nachfolgezeit die zerstörten Ruinen bewusst mit einem Grabhügel überdeckten statt sie zu überbauen, deutet darauf hin, dass der Ort schon in der Bronzezeit als besonderer, möglicherweise sakraler Platz galt. Lerna zeigt damit, wie tief die Wurzeln mancher griechischer Mythen tatsächlich reichen: Die Ortsverortung war schon in klassischer Zeit jahrhundertealt und beruhte selbst schon auf einer langen mündlichen Überlieferung, nicht auf einer beliebigen späteren Zuschreibung.",
+    "whatYouSee": "Sichtbar sind die Grundmauern des 'Hauses der Ziegel' unter einem Schutzdach, dazu Reste eines mittelneolithischen Hauses und frühhelladischer Befestigungsmauern. Keine aufgehenden Wände oder rekonstruierten Bauten. Die Anlage ist deutlich kleiner und unscheinbarer als die bekannten Palast- und Burgstätten der Region, was zum eher stillen, wenig besuchten Charakter des Orts beiträgt. Informationstafeln vor Ort ordnen die einzelnen Bauphasen ein, ersetzen aber keinen lebendigen Rundgang wie in Mykene oder Tiryns. Wer archäologische Grundrisse lesen kann, findet hier dennoch einen aufschlussreichen Kontrast zu den späteren, weitaus monumentaleren Bauten der Bronzezeit.",
+    "walkthrough": [],
+    "museumOnSite": false,
+    "terrain": "Kleines, ebenes Gelände, gut zugänglich.",
+    "shadeAndHeat": "Kaum Schatten außer unter dem Schutzdach des Hauptgebäudes.",
+    "misconceptions": null,
+    "readingHooks": "Hesiods Theogonie zum Mythos der Hydra; Strabons Geografie zur antiken Verortung bei Lerna.",
+    "combineWith": ["argos"],
+    "ticketInfo": null
+  },
+  {
+    "id": "karathona",
+    "name": "Karathona",
+    "nameGr": "Καραθώνα",
+    "type": "beach",
+    "region": "argolis",
+    "coords": [37.5417, 22.8204],
+    "coordSource": "exact",
+    "summary": "Größter Sandstrand von Nafplio, hufeisenförmige Bucht am Ende des Küstenwegs von Arvanitia.",
+    "timeNeeded": "1,5–3 Std.",
+    "touristTrapRisk": {
+      "level": 3,
+      "note": "Nafplios beliebtester Sandstrand mit entsprechender Infrastruktur, aber durch die Größe der Bucht verteilt sich der Andrang."
+    },
+    "nearby": ["nafplio", "arvanitia"],
+    "tags": ["sandstrand", "familienfreundlich", "spazierweg"],
+    "confidence": "medium",
+    "needsVerification": ["Aktuelle Liegen-/Sonnenschirmdichte"],
+    "surface": "feiner Sand",
+    "seabed": "Sand",
+    "entry": "flach abfallend",
+    "barefootFriendly": true,
+    "crowding": {"peakSeason": 4, "shoulderSeason": 2, "timeOfDayNote": null},
+    "shade": "kein Schatten",
+    "windExposure": "Geschützte, hufeisenförmige Bucht, meist ruhiges Wasser.",
+    "hazards": [],
+    "snorkeling": {
+      "rating": 1, "habitat": "sandflach", "visibility": null,
+      "speciesLikely": ["Ährenfische (Atherina spp.)", "Meeräschen (Mugilidae)"],
+      "speciesCaution": ["Petermännchen (Trachinus draco) – vergraben sich im Sand, schmerzhafter Stich"]
+    },
+    "facilities": {"sunbeds": "Reihenbetrieb", "taverna": "mehrere", "wc": true, "freshwater": true, "parking": null},
+    "access": {"mode": "direkt am Parkplatz", "minutesFromParking": 3, "roadQuality": null, "difficulty": "leicht"},
+    "nudistTolerated": null,
+    "bestTime": "Ganztägig geeignet; auch zu Fuß über den ca. 2,6–3 km langen, flachen Küstenweg von Arvanitia aus erreichbar (30–45 Min.).",
+    "history": null
+  },
+  {
+    "id": "argos",
+    "name": "Argos",
+    "nameGr": "Άργος",
+    "type": "town",
+    "region": "argolis",
+    "coords": [37.6170, 22.7170],
+    "coordSource": "exact",
+    "summary": "Eine der ältesten durchgehend bewohnten Städte Europas (Datierung und Titel umstritten), mit antikem Theater und der Burg Larissa.",
+    "timeNeeded": "1–2 Std.",
+    "touristTrapRisk": {
+      "level": 1,
+      "note": "Alltägliche Kleinstadt ohne touristische Inszenierung, kaum auf Tagesgäste ausgerichtet."
+    },
+    "nearby": ["lerna", "mykene", "tiryns"],
+    "tags": ["antike", "stadt", "theater", "burg"],
+    "confidence": "medium",
+    "needsVerification": ["Aktuelle Zugänglichkeit von Theater und Burg Larissa", "Exakte Kapazität des antiken Theaters (nur eine Quelle gefunden, ca. 20.000)"],
+    "character": "Argos gilt vielfach als eine der ältesten durchgehend bewohnten Städte Europas, mit Siedlungsspuren, die manche Quellen bis ca. 5000 v. Chr. zurückverfolgen – ein Titel, der allerdings umstritten ist: Auch die bulgarische Stadt Plovdiv wird oft als älteste durchgehend bewohnte Stadt Europas bezeichnet, und beide Behauptungen lassen sich archäologisch letztlich schwer eindeutig belegen. Unabhängig davon war Argos in mykenischer Zeit gemeinsam mit Mykene und Tiryns eines der Machtzentren der Argolis-Ebene und blieb auch in klassischer Zeit eine bedeutende Stadt. Anders als die Nachbarstädte ist das heutige Argos eine lebendige, alltägliche Kleinstadt ohne ausgeprägten Tourismus.",
+    "historyTimeline": [
+      {"period": "Mykenische Zeit, ca. 1600–1100 v. Chr.", "note": "Argos ist neben Mykene und Tiryns eines der bedeutendsten Zentren der Argolis-Ebene."}
+    ],
+    "whatToDo": ["Antikes Theater am Fuß des Larissa-Hügels (der Überlieferung nach ca. 20.000 Plätze)", "Burg Larissa auf dem Hügel über der Stadt", "Archäologisches Museum von Argos"],
+    "parking": null,
+    "foodScene": "Alltägliche Taverna-Kultur einer griechischen Kleinstadt, kaum auf Tagestouristen ausgerichtet."
   }
 ]
