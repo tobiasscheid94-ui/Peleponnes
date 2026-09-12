@@ -1199,6 +1199,13 @@ html, body {
   color: var(--color-gold);
   font-size: 14px;
 }
+.dislike-reasons {
+  margin: -6px 0 14px;
+}
+.dislike-reasons > .species-note {
+  display: block;
+  margin-bottom: 6px;
+}
 
 /* ---------- Aehnliche Orte ---------- */
 
@@ -1770,6 +1777,17 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     beach: '#2f7f9e', site: '#8a6d3b', town: '#a0442c',
     monastery_castle: '#5c5c66', hike: '#3f7d3a', viewpoint: '#6a4c93'
   };
+  // Optionale Gruende bei Bewertungen <=2. Zweck: eine schlechte Bewertung soll
+  // nicht diffus alle Merkmale des Orts belasten (siehe buildTasteProfiles) --
+  // "zu ueberlaufen" ist etwas anderes als "Sandstrand war nicht meins".
+  var DISLIKE_REASONS = [
+    { id: 'ueberlaufen', label: 'zu überlaufen' },
+    { id: 'zugang', label: 'Zufahrt/Zugang schwierig' },
+    { id: 'erwartung', label: 'nicht wie erwartet' },
+    { id: 'zustand', label: 'schlechter Zustand' },
+    { id: 'teuer', label: 'zu teuer' },
+    { id: 'geschmack', label: 'einfach nicht mein Ding' }
+  ];
   var TYPE_GLYPHS = {
     beach: '<path d="M9 12.5c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M9 16.5c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
     site: '<path d="M9 19h16M9 19V9M25 19V9M9 9h16M12 9v10M17 9v10M22 9v10" stroke="#fff" stroke-width="1.4" fill="none" stroke-linejoin="round"/>',
@@ -1874,8 +1892,25 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     if (rating === null) {
       delete visits[id];
     } else {
-      visits[id] = { rating: rating, visitedAt: (visits[id] && visits[id].visitedAt) || new Date().toISOString() };
+      var existing = visits[id];
+      visits[id] = {
+        rating: rating,
+        visitedAt: (existing && existing.visitedAt) || new Date().toISOString(),
+        // Alte Ablehnungsgruende nur behalten, wenn weiterhin niedrig bewertet --
+        // beim Hochstufen auf eine gute Bewertung sollen sie nicht anhaften bleiben.
+        dislikeReasons: rating <= 2 ? ((existing && existing.dislikeReasons) || []) : []
+      };
     }
+    persistVisits();
+  }
+
+  function toggleDislikeReason(id, reasonId) {
+    var v = visits[id];
+    if (!v || v.rating > 2) return;
+    var list = v.dislikeReasons || [];
+    var idx = list.indexOf(reasonId);
+    if (idx === -1) list.push(reasonId); else list.splice(idx, 1);
+    v.dislikeReasons = list;
     persistVisits();
   }
 
@@ -2083,6 +2118,25 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     return f;
   }
 
+  // Leitet aus strukturierten Feldern ab, ob ein Kandidat dieselbe Art von
+  // Problem aufweisen koennte wie ein zuvor genannter Ablehnungsgrund -- nur
+  // fuer Gruende, die sich verlaesslich an echten Feldern festmachen lassen
+  // (touristTrapRisk, crowding, Zugangsschwierigkeit). Die uebrigen Gruende
+  // ("nicht wie erwartet", "schlechter Zustand", "zu teuer", "nicht mein Ding")
+  // haben keine verlaessliche strukturelle Entsprechung und bleiben rein
+  // informativ in der eigenen Bewertungsliste, statt eine erfundene Heuristik
+  // vorzutaeuschen.
+  function reasonFeaturesForCandidate(e) {
+    var reasons = {};
+    var trapLevel = e.touristTrapRisk && e.touristTrapRisk.level;
+    if (trapLevel >= 4) reasons['grund:ueberlaufen'] = true;
+    if (e.type === 'beach' && e.crowding && e.crowding.peakSeason >= 4) reasons['grund:ueberlaufen'] = true;
+    if (e.type === 'beach' && e.access && (e.access.difficulty === 'mittel' || e.access.difficulty === 'schwer')) {
+      reasons['grund:zugang'] = true;
+    }
+    return Object.keys(reasons);
+  }
+
   function sharedFeatures(a, b) {
     var setB = {};
     featureSet(b).forEach(function (f) { setB[f] = true; });
@@ -2129,7 +2183,7 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     return Object.keys(visits).map(function (id) {
       var e = entriesById[id];
       if (!e) return null;
-      return { entry: e, rating: visits[id].rating };
+      return { entry: e, rating: visits[id].rating, dislikeReasons: visits[id].dislikeReasons || [] };
     }).filter(Boolean);
   }
 
@@ -2139,9 +2193,20 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
       var type = r.entry.type;
       if (!byType[type]) byType[type] = { weights: {}, exemplars: [], trapLevels: [] };
       var weight = r.rating - 3;
-      featureSet(r.entry).forEach(function (f) {
-        byType[type].weights[f] = (byType[type].weights[f] || 0) + weight;
-      });
+      if (weight < 0 && r.dislikeReasons.length) {
+        // Gezielt statt diffus: die Ablehnung wird den genannten Gruenden
+        // zugeschrieben, nicht allen Merkmalen des Orts. Sonst waere z.B.
+        // "Sandstrand" pauschal negativ belastet, obwohl nur die Ueberfuellung
+        // am Tag des Besuchs gestoert hat.
+        r.dislikeReasons.forEach(function (reasonId) {
+          var f = 'grund:' + reasonId;
+          byType[type].weights[f] = (byType[type].weights[f] || 0) + weight;
+        });
+      } else {
+        featureSet(r.entry).forEach(function (f) {
+          byType[type].weights[f] = (byType[type].weights[f] || 0) + weight;
+        });
+      }
       byType[type].exemplars.push(r);
       if (r.rating >= 4 && r.entry.touristTrapRisk) byType[type].trapLevels.push(r.entry.touristTrapRisk.level);
     });
@@ -2166,14 +2231,18 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
       var scored = candidates.map(function (e) {
         var score = 0;
         featureSet(e).forEach(function (f) { score += profile.weights[f] || 0; });
+        reasonFeaturesForCandidate(e).forEach(function (f) { score += profile.weights[f] || 0; });
         if (e.touristTrapRisk && e.touristTrapRisk.level > trapCap) score -= 3;
         return { entry: e, score: score };
       }).filter(function (s) { return s.score > 0; });
       scored.sort(function (a, b) { return b.score - a.score; });
 
       scored.slice(0, 2).forEach(function (s) {
-        // Staerkste Bezugspunkte: bewertete Exemplare mit den meisten geteilten Merkmalen.
-        var exemplarScores = profile.exemplars.map(function (ex) {
+        // Staerkste Bezugspunkte: bewertete Exemplare mit den meisten geteilten
+        // Merkmalen -- nur unter den tatsaechlich gemochten (>=4 Sterne), sonst
+        // koennte der Begruendungstext ("weil dir X gefallen hat") faelschlich
+        // einen abgelehnten Ort als positiven Bezugspunkt nennen.
+        var exemplarScores = profile.exemplars.filter(function (ex) { return ex.rating >= 4; }).map(function (ex) {
           return { ex: ex, shared: sharedFeatures(s.entry, ex.entry) };
         }).filter(function (x) { return x.shared.length > 0; });
         exemplarScores.sort(function (a, b) { return b.shared.length - a.shared.length; });
@@ -2630,16 +2699,30 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
   }
 
   function renderRatingWidget(id) {
-    var current = visits[id] ? visits[id].rating : 0;
+    var v = visits[id];
+    var current = v ? v.rating : 0;
     var stars = '';
     for (var i = 1; i <= 5; i++) {
       stars += '<button type="button" class="sheet-rating__star' + (i <= current ? ' is-filled' : '') +
         '" data-rate="' + i + '" aria-label="' + i + ' Sterne">' + (i <= current ? '★' : '☆') + '</button>';
     }
-    return '<div class="sheet-rating">' +
+    var html = '<div class="sheet-rating">' +
       '<span class="sheet-rating__stars">' + stars + '</span>' +
       (current ? '<button type="button" class="sheet-rating__clear" data-rate-clear>War doch nicht hier</button>' : '<span class="species-note">War ich hier?</span>') +
       '</div>';
+    if (current && current <= 2) {
+      var activeReasons = v.dislikeReasons || [];
+      html += '<div class="dislike-reasons">' +
+        '<span class="species-note">Was hat nicht gefallen? (optional, schärft künftige Empfehlungen)</span>' +
+        '<div class="chip-row">' +
+        DISLIKE_REASONS.map(function (r) {
+          var active = activeReasons.indexOf(r.id) !== -1;
+          return '<button type="button" class="chip' + (active ? ' active' : '') +
+            '" data-dislike-reason="' + r.id + '">' + escapeHtml(r.label) + '</button>';
+        }).join('') +
+        '</div></div>';
+    }
+    return html;
   }
 
   function closeSheet() {
@@ -2670,6 +2753,12 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     var clearBtn = ev.target.closest('[data-rate-clear]');
     if (clearBtn && currentSheetEntryId) {
       setRating(currentSheetEntryId, null);
+      openSheet(currentSheetEntryId);
+      return;
+    }
+    var reasonBtn = ev.target.closest('[data-dislike-reason]');
+    if (reasonBtn && currentSheetEntryId) {
+      toggleDislikeReason(currentSheetEntryId, reasonBtn.getAttribute('data-dislike-reason'));
       openSheet(currentSheetEntryId);
       return;
     }
@@ -2911,8 +3000,13 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     ratingsListEl.innerHTML = rated.map(function (r) {
       var stars = '';
       for (var i = 1; i <= 5; i++) stars += i <= r.rating ? '★' : '☆';
+      var reasonLabels = r.dislikeReasons.map(function (id) {
+        var found = DISLIKE_REASONS.filter(function (x) { return x.id === id; })[0];
+        return found ? found.label : id;
+      });
+      var reasonHtml = reasonLabels.length ? '<span class="why">' + escapeHtml(reasonLabels.join(', ')) + '</span>' : '';
       return '<button type="button" class="similar-place-btn" data-open-entry-modal="' + escapeHtml(r.entry.id) + '"><strong>' + escapeHtml(r.entry.name) + '</strong> ' +
-        '<span class="rating-star-row">' + stars + '</span></button>';
+        '<span class="rating-star-row">' + stars + '</span>' + reasonHtml + '</button>';
     }).join('');
   }
 
@@ -3351,7 +3445,8 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     allRoutes: allRoutes, startRoute: startRoute, routeStep: routeStep,
     exitRoute: exitRoute, getRouteState: function () { return routeTripState; },
     loadUserEntries: loadUserEntries, openPlaceForm: openPlaceForm,
-    mergeUserEntries: mergeUserEntries, nearestRegion: nearestRegion
+    mergeUserEntries: mergeUserEntries, nearestRegion: nearestRegion,
+    buildTasteProfiles: buildTasteProfiles, reasonFeaturesForCandidate: reasonFeaturesForCandidate
   };
 })();
 

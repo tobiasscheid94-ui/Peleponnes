@@ -530,6 +530,13 @@ html, body {
   color: var(--color-gold);
   font-size: 14px;
 }
+.dislike-reasons {
+  margin: -6px 0 14px;
+}
+.dislike-reasons > .species-note {
+  display: block;
+  margin-bottom: 6px;
+}
 
 /* ---------- Aehnliche Orte ---------- */
 
