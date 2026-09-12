@@ -298,8 +298,14 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     var color = TYPE_COLORS[entry.type] || '#444';
     var glyph = TYPE_GLYPHS[entry.type] || '';
     var favClass = favorites.has(entry.id) ? ' is-favorite' : '';
+    // Selbst erfasste Orte bekommen ein kleines Plus-Abzeichen, damit auf der
+    // Karte sofort erkennbar ist, was kuratiert und was selbst notiert ist.
+    var userMark = entry.source === 'user'
+      ? '<circle cx="27" cy="7" r="6" fill="#fff" stroke="' + color + '" stroke-width="1.5"/>' +
+        '<path d="M27 4v6M24 7h6" stroke="' + color + '" stroke-width="1.8" stroke-linecap="round"/>'
+      : '';
     var html = '<svg viewBox="0 0 34 34" width="34" height="34">' +
-      '<path d="' + PIN_PATH + '" fill="' + color + '"/>' + glyph + '</svg>';
+      '<path d="' + PIN_PATH + '" fill="' + color + '"/>' + glyph + userMark + '</svg>';
     return L.divIcon({
       html: html,
       className: 'peloponnes-marker' + favClass,
@@ -957,6 +963,8 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   }
 
   function renderSheetBody(e) {
+    // Selbst erfasste Orte haben ein reduziertes Feldset und eine eigene Ansicht.
+    if (e.source === 'user') return renderUserBody(e);
     if (e.type === 'beach') return renderBeachBody(e);
     // monastery_castle teilt sich praktisch dieselbe Feldstruktur wie site
     // (epoch/dating/whyItMatters/whatYouSee/walkthrough/misconceptions/...)
@@ -976,7 +984,8 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     sheetFavBtn.textContent = favorites.has(id) ? '★' : '☆';
 
     var badges = '<span class="badge">' + escapeHtml(TYPE_LABELS[e.type] || e.type) + '</span>';
-    badges += '<span class="badge">' + escapeHtml(REGION_LABELS[e.region] || e.region) + '</span>';
+    if (e.region) badges += '<span class="badge">' + escapeHtml(REGION_LABELS[e.region] || e.region) + '</span>';
+    if (e.source === 'user') badges += '<span class="badge badge-user">Eigener Ort</span>';
     if (e.touristTrapRisk) {
       badges += '<span class="badge badge-trap" title="' + escapeHtml(e.touristTrapRisk.note || '') + '">Touristenfalle ' + e.touristTrapRisk.level + '/5</span>';
     }
@@ -1395,6 +1404,292 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     startRoute(btn.getAttribute('data-start-route'));
   });
 
+  // ---------- Eigene Orte ----------
+  // Erfassung laeuft gegen /api/places (Vercel-Function), die die Eintraege
+  // versioniert in data/eigene.json im Repo ablegt. Gelesen wird zur Laufzeit
+  // statt aus dem gebauten Bundle, damit ein neuer Ort sofort auf der Karte
+  // steht und nicht auf ein Deploy wartet. Eigene Orte bleiben bewusst von den
+  // kuratierten Eintraegen getrennt: source='user', eigenes Marker-Kennzeichen,
+  // und sie durchlaufen nicht die Faktenpruefung des kuratierten Bestands.
+
+  var PLACES_API = '/api/places';
+
+  var addPlaceBtn = document.getElementById('add-place-btn');
+  var placeModal = document.getElementById('place-modal');
+  var placeModalTitle = document.getElementById('place-modal-title');
+  var placeNameEl = document.getElementById('place-name');
+  var placeTypeEl = document.getElementById('place-type');
+  var placePasteEl = document.getElementById('place-pos-paste');
+  var placeReadoutEl = document.getElementById('place-pos-readout');
+  var placeSummaryEl = document.getElementById('place-summary');
+  var placeNotesEl = document.getElementById('place-notes');
+  var placeTagsEl = document.getElementById('place-tags');
+  var placeKeyRow = document.getElementById('place-key-row');
+  var placeKeyEl = document.getElementById('place-key');
+  var placeErrorEl = document.getElementById('place-error');
+  var placeSaveBtn = document.getElementById('place-save');
+  var placeDeleteBtn = document.getElementById('place-delete');
+  var placeBeachBlock = document.getElementById('place-beach-block');
+  var placeSnorkelEl = document.getElementById('place-beach-snorkel');
+  var pickHint = document.getElementById('pick-hint');
+  var beachFieldEls = {
+    surface: document.getElementById('place-beach-surface'),
+    seabed: document.getElementById('place-beach-seabed'),
+    entry: document.getElementById('place-beach-entry'),
+    shade: document.getElementById('place-beach-shade'),
+    parking: document.getElementById('place-beach-parking')
+  };
+
+  var editingPlaceId = null;
+  var draftCoords = null;
+  var draftCoordSource = 'approx';
+
+  Object.keys(TYPE_LABELS).forEach(function (t) {
+    var opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = TYPE_LABELS[t];
+    placeTypeEl.appendChild(opt);
+  });
+
+  // Region wird nicht abgefragt, sondern aus dem naechstgelegenen kuratierten
+  // Eintrag abgeleitet -- ein Feld weniger im Formular, und die Region-Filter
+  // greifen trotzdem.
+  function nearestRegion(coords) {
+    var best = null;
+    var bestKm = Infinity;
+    allEntries.forEach(function (e) {
+      if (e.source === 'user' || !e.region) return;
+      var km = haversineKm(coords, e.coords);
+      if (km < bestKm) { bestKm = km; best = e.region; }
+    });
+    return best;
+  }
+
+  function mergeUserEntries(list) {
+    // In-place aktualisieren, damit bestehende Referenzen auf allEntries gueltig bleiben.
+    for (var i = allEntries.length - 1; i >= 0; i--) {
+      if (allEntries[i].source === 'user') {
+        delete entriesById[allEntries[i].id];
+        allEntries.splice(i, 1);
+      }
+    }
+    list.forEach(function (e) {
+      if (!e || !e.id || !Array.isArray(e.coords) || e.coords.length !== 2) return;
+      e.source = 'user';
+      allEntries.push(e);
+      entriesById[e.id] = e;
+    });
+    renderFilterChips();
+    renderMarkers();
+  }
+
+  function loadUserEntries() {
+    return fetch(PLACES_API, { headers: { Accept: 'application/json' } })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) {
+        if (data && Array.isArray(data.entries)) mergeUserEntries(data.entries);
+      })
+      .catch(function () {
+        // Kein Server erreichbar: der kuratierte Guide funktioniert unveraendert weiter.
+      });
+  }
+
+  function showPlaceError(msg) {
+    placeErrorEl.textContent = msg || '';
+    placeErrorEl.hidden = !msg;
+  }
+
+  function setDraftCoords(coords, source) {
+    draftCoords = [coords[0], coords[1]];
+    draftCoordSource = source;
+    var region = nearestRegion(draftCoords);
+    placeReadoutEl.textContent = draftCoords[0].toFixed(5) + ', ' + draftCoords[1].toFixed(5) +
+      ' · ' + (source === 'exact' ? 'GPS-genau' : 'ungefähr') +
+      (region ? ' · ' + (REGION_LABELS[region] || region) : '');
+  }
+
+  function syncBeachBlock() {
+    placeBeachBlock.hidden = placeTypeEl.value !== 'beach';
+  }
+  placeTypeEl.addEventListener('change', syncBeachBlock);
+
+  function openPlaceForm(entry) {
+    editingPlaceId = entry ? entry.id : null;
+    placeModalTitle.textContent = entry ? 'Eigenen Ort bearbeiten' : 'Eigenen Ort hinzufügen';
+    placeNameEl.value = entry ? entry.name : '';
+    placeTypeEl.value = entry ? entry.type : 'beach';
+    placeSummaryEl.value = (entry && entry.summary) || '';
+    placeNotesEl.value = (entry && entry.notes) || '';
+    placeTagsEl.value = entry && entry.tags ? entry.tags.join(', ') : '';
+    placePasteEl.value = '';
+    Object.keys(beachFieldEls).forEach(function (k) {
+      beachFieldEls[k].value = (entry && entry.beach && entry.beach[k]) || '';
+    });
+    placeSnorkelEl.value = entry && entry.beach && typeof entry.beach.snorkelRating === 'number'
+      ? String(entry.beach.snorkelRating) : '';
+    placeDeleteBtn.hidden = !entry;
+    placeKeyRow.hidden = !!storageGet('peloponnes:writeKey');
+    placeKeyEl.value = '';
+    showPlaceError('');
+    syncBeachBlock();
+    if (entry) {
+      setDraftCoords(entry.coords, entry.coordSource || 'approx');
+    } else {
+      draftCoords = null;
+      draftCoordSource = 'approx';
+      placeReadoutEl.textContent = 'Noch keine Position gesetzt.';
+    }
+    placeModal.hidden = false;
+  }
+
+  document.getElementById('place-pos-gps').addEventListener('click', function () {
+    if (!navigator.geolocation) {
+      showPlaceError('Dieses Gerät liefert keine Standortdaten.');
+      return;
+    }
+    showPlaceError('');
+    placeReadoutEl.textContent = 'Standort wird ermittelt…';
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      setDraftCoords([pos.coords.latitude, pos.coords.longitude], 'exact');
+    }, function () {
+      placeReadoutEl.textContent = 'Standort nicht verfügbar.';
+      showPlaceError('Standort nicht ermittelbar — Koordinaten einfügen oder auf der Karte wählen.');
+    }, { enableHighAccuracy: true, timeout: 10000 });
+  });
+
+  document.getElementById('place-pos-map').addEventListener('click', function () {
+    placeModal.hidden = true;
+    pickHint.hidden = false;
+    map.once('click', function (ev) {
+      pickHint.hidden = true;
+      placeModal.hidden = false;
+      setDraftCoords([ev.latlng.lat, ev.latlng.lng], 'approx');
+    });
+  });
+
+  // Koordinaten aus Google Maps o.ä. einfuegen: "36.9583, 21.6597"
+  placePasteEl.addEventListener('input', function () {
+    var m = placePasteEl.value.match(/(-?\d+(?:\.\d+)?)\s*[,\s]\s*(-?\d+(?:\.\d+)?)/);
+    if (!m) return;
+    var lat = parseFloat(m[1]);
+    var lon = parseFloat(m[2]);
+    if (!isFinite(lat) || !isFinite(lon)) return;
+    setDraftCoords([lat, lon], 'approx');
+  });
+
+  function collectPlacePayload() {
+    var name = placeNameEl.value.trim();
+    if (!name) return { error: 'Bitte einen Namen eingeben.' };
+    if (!draftCoords) return { error: 'Bitte eine Position setzen.' };
+
+    var payload = {
+      name: name,
+      type: placeTypeEl.value,
+      coords: draftCoords,
+      coordSource: draftCoordSource,
+      region: nearestRegion(draftCoords),
+      summary: placeSummaryEl.value.trim() || null,
+      notes: placeNotesEl.value.trim() || null,
+      tags: placeTagsEl.value.split(',').map(function (t) { return t.trim(); }).filter(Boolean)
+    };
+
+    if (payload.type === 'beach') {
+      var beach = {};
+      Object.keys(beachFieldEls).forEach(function (k) {
+        var v = beachFieldEls[k].value.trim();
+        if (v) beach[k] = v;
+      });
+      if (placeSnorkelEl.value !== '') beach.snorkelRating = parseInt(placeSnorkelEl.value, 10);
+      if (Object.keys(beach).length) payload.beach = beach;
+    }
+    return { payload: payload };
+  }
+
+  function sendPlace(method, body) {
+    var key = placeKeyRow.hidden ? storageGet('peloponnes:writeKey') : placeKeyEl.value.trim();
+    if (!key) return Promise.reject(new Error('Bitte den Schreibschlüssel eingeben.'));
+    return fetch(PLACES_API, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'x-guide-key': key },
+      body: JSON.stringify(body)
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok) throw new Error(data.error || ('Server antwortete mit ' + res.status + '.'));
+        storageSet('peloponnes:writeKey', key);
+        return data;
+      });
+    });
+  }
+
+  placeSaveBtn.addEventListener('click', function () {
+    var collected = collectPlacePayload();
+    if (collected.error) { showPlaceError(collected.error); return; }
+
+    var body = collected.payload;
+    var method = 'POST';
+    if (editingPlaceId) { body.id = editingPlaceId; method = 'PUT'; }
+
+    placeSaveBtn.disabled = true;
+    showPlaceError('');
+    sendPlace(method, body)
+      .then(function (data) {
+        var id = (data && data.entry && data.entry.id) || editingPlaceId;
+        return loadUserEntries().then(function () { return id; });
+      })
+      .then(function (id) {
+        placeModal.hidden = true;
+        if (id && entriesById[id]) openSheet(id);
+      })
+      .catch(function (err) { showPlaceError(err.message); })
+      .then(function () { placeSaveBtn.disabled = false; });
+  });
+
+  placeDeleteBtn.addEventListener('click', function () {
+    if (!editingPlaceId) return;
+    if (!window.confirm('Diesen eigenen Ort wirklich löschen?')) return;
+    placeDeleteBtn.disabled = true;
+    showPlaceError('');
+    sendPlace('DELETE', { id: editingPlaceId })
+      .then(function () { return loadUserEntries(); })
+      .then(function () { placeModal.hidden = true; closeSheet(); })
+      .catch(function (err) { showPlaceError(err.message); })
+      .then(function () { placeDeleteBtn.disabled = false; });
+  });
+
+  addPlaceBtn.addEventListener('click', function () { openPlaceForm(null); });
+
+  sheetBodyEl.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-edit-place]');
+    if (!btn) return;
+    var entry = entriesById[btn.getAttribute('data-edit-place')];
+    if (entry) openPlaceForm(entry);
+  });
+
+  function renderUserBody(e) {
+    var html = '';
+    if (e.summary) html += '<p>' + escapeHtml(e.summary) + '</p>';
+    if (e.beach) {
+      html += fieldRow('Untergrund', e.beach.surface);
+      html += fieldRow('Meeresboden', e.beach.seabed);
+      html += fieldRow('Einstieg', e.beach.entry);
+      html += fieldRow('Schatten', e.beach.shade);
+      html += fieldRow('Parken', e.beach.parking);
+      html += fieldRow('Zugang', e.beach.access);
+      if (typeof e.beach.snorkelRating === 'number') {
+        html += fieldRow('Schnorcheln', e.beach.snorkelRating + '/5');
+      }
+    }
+    if (e.notes) {
+      html += '<h3>Notizen</h3><p>' + escapeHtml(e.notes).replace(/\n/g, '<br>') + '</p>';
+    }
+    html += '<p class="species-note">Selbst erfasst' +
+      (e.createdAt ? ' am ' + escapeHtml(new Date(e.createdAt).toLocaleDateString('de-DE')) : '') +
+      ' · nicht gegengeprüft.</p>';
+    html += '<button type="button" class="btn place-edit-btn" data-edit-place="' +
+      escapeHtml(e.id) + '">Bearbeiten</button>';
+    return html;
+  }
+
   // ---------- "Zu prüfen"-Modal ----------
 
   var needsVerifyBtn = document.getElementById('needs-verify-btn');
@@ -1427,6 +1722,7 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   searchClear.hidden = !state.search;
   renderFilterChips();
   renderMarkers();
+  loadUserEntries();
 
   window.__peloponnesGuide = {
     map: map, bounds: bounds, state: state, allEntries: allEntries,
@@ -1436,6 +1732,8 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     similarEntries: similarEntries, startTour: startTour, tourStep: tourStep,
     exitTour: exitTour, getTourState: function () { return tourState; },
     allRoutes: allRoutes, startRoute: startRoute, routeStep: routeStep,
-    exitRoute: exitRoute, getRouteState: function () { return routeTripState; }
+    exitRoute: exitRoute, getRouteState: function () { return routeTripState; },
+    loadUserEntries: loadUserEntries, openPlaceForm: openPlaceForm,
+    mergeUserEntries: mergeUserEntries, nearestRegion: nearestRegion
   };
 })();

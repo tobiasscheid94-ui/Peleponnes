@@ -43,11 +43,13 @@
   </div>
 
   <div class="fab-stack">
+    <button id="add-place-btn" class="icon-btn icon-btn--primary" type="button" aria-label="Eigenen Ort hinzufügen">+</button>
     <button id="locate-btn" class="icon-btn" type="button" aria-label="Umkreis um meinen Standort" hidden>◎</button>
     <button id="needs-verify-btn" class="icon-btn" type="button" aria-label="Zu prüfende Angaben">!</button>
   </div>
 
   <div id="offline-banner" class="offline-banner" hidden>Offline-Kartenbasis aktiv</div>
+  <div id="pick-hint" class="pick-hint" hidden>Auf die Karte tippen, um die Position zu setzen</div>
 
   <div id="bottom-sheet" class="bottom-sheet" data-state="hidden">
     <div id="bottom-sheet-handle" class="bottom-sheet__handle"></div>
@@ -89,6 +91,95 @@
       <div class="modal-actions">
         <button id="favorites-export" class="btn" type="button">Exportieren</button>
         <button id="favorites-import" class="btn btn-primary" type="button">Importieren</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="place-modal" class="modal-overlay" hidden>
+    <div class="modal-sheet">
+      <button class="modal-close" data-close-modal type="button" aria-label="Schließen">✕</button>
+      <h2 id="place-modal-title">Eigenen Ort hinzufügen</h2>
+
+      <div class="form-row">
+        <label for="place-name">Name</label>
+        <input id="place-name" type="text" maxlength="80" autocomplete="off" placeholder="z. B. Kleine Bucht bei Gerolimenas">
+      </div>
+
+      <div class="form-row">
+        <label for="place-type">Typ</label>
+        <select id="place-type"></select>
+      </div>
+
+      <div class="form-row">
+        <label>Position</label>
+        <div class="place-pos-actions">
+          <button id="place-pos-gps" class="btn" type="button">Mein Standort</button>
+          <button id="place-pos-map" class="btn" type="button">Auf Karte wählen</button>
+        </div>
+        <input id="place-pos-paste" type="text" inputmode="decimal" autocomplete="off" placeholder="oder Koordinaten einfügen: 36.9583, 21.6597">
+        <p id="place-pos-readout" class="species-note">Noch keine Position gesetzt.</p>
+      </div>
+
+      <div class="form-row">
+        <label for="place-summary">Kurzbeschreibung</label>
+        <textarea id="place-summary" maxlength="200" rows="2" placeholder="Ein Satz, der den Ort trifft."></textarea>
+      </div>
+
+      <div id="place-beach-block" class="form-beach" hidden>
+        <div class="form-row">
+          <label for="place-beach-surface">Untergrund</label>
+          <input id="place-beach-surface" type="text" maxlength="80" placeholder="feiner Sand, Kies, Kiesel…">
+        </div>
+        <div class="form-row">
+          <label for="place-beach-seabed">Meeresboden</label>
+          <input id="place-beach-seabed" type="text" maxlength="80" placeholder="Sand, Fels, gemischt…">
+        </div>
+        <div class="form-row">
+          <label for="place-beach-entry">Einstieg</label>
+          <input id="place-beach-entry" type="text" maxlength="80" placeholder="flach abfallend, Felseinstieg…">
+        </div>
+        <div class="form-row">
+          <label for="place-beach-shade">Schatten</label>
+          <input id="place-beach-shade" type="text" maxlength="80" placeholder="kein Schatten, Bäume am Rand…">
+        </div>
+        <div class="form-row">
+          <label for="place-beach-parking">Parken</label>
+          <input id="place-beach-parking" type="text" maxlength="80" placeholder="wie und wo geparkt wurde">
+        </div>
+        <div class="form-row">
+          <label for="place-beach-snorkel">Schnorcheln (0–5)</label>
+          <select id="place-beach-snorkel">
+            <option value="">keine Angabe</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="place-notes">Notizen</label>
+        <textarea id="place-notes" maxlength="2000" rows="4" placeholder="Was du vor Ort gesehen hast. Ruhig roh — Recherche und Feinschliff kommen später."></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="place-tags">Tags</label>
+        <input id="place-tags" type="text" maxlength="200" autocomplete="off" placeholder="mit Komma getrennt: schnorcheln, ruhig">
+      </div>
+
+      <div class="form-row" id="place-key-row">
+        <label for="place-key">Schreibschlüssel</label>
+        <input id="place-key" type="password" autocomplete="off" placeholder="einmalig, wird auf diesem Gerät gemerkt">
+      </div>
+
+      <p id="place-error" class="place-error" hidden></p>
+
+      <div class="modal-actions">
+        <button id="place-delete" class="btn" type="button" hidden>Löschen</button>
+        <button id="place-save" class="btn btn-primary" type="button">Speichern</button>
       </div>
     </div>
   </div>

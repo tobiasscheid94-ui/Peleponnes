@@ -65,3 +65,48 @@ Peloponnes-Bounding-Box zugeschnitten (`mapshaper -clip`) und liegen in
 Straßen (Geofabrik-Straßendaten waren nicht erreichbar). Bei Bedarf lässt
 sich `geo/basemap.geojson` später gegen eine feinere/andere Quelle
 austauschen, ohne `build.js` anzupassen.
+
+## Eigene Orte erfassen (`api/places.js`)
+
+Über das `+` in der App lassen sich eigene Orte und Strände erfassen. Sie
+werden **nicht** im gebauten Bundle gespeichert, sondern zur Laufzeit von
+`/api/places` geholt — ein neuer Ort ist damit sofort sichtbar und wartet
+nicht auf ein Deploy.
+
+Die Vercel-Function legt die Einträge als `data/eigene.json` im Repo selbst
+ab (über die GitHub-Contents-API). Damit ist jede Änderung ein Commit:
+versioniert, ohne Zusatzdienst gesichert und später mit Recherche in den
+kuratierten Bestand (`data/<region>.json`) überführbar.
+
+Die beiden Ebenen bleiben getrennt:
+
+| | kuratiert (`data/<region>.json`) | selbst erfasst (`data/eigene.json`) |
+|---|---|---|
+| Pflichtfelder | vollständiges Schema inkl. Wortzahl-Vorgaben | nur Name, Typ, Koordinaten |
+| Faktenprüfung | recherchiert, `confidence`/`needsVerification` gesetzt | roh, ausdrücklich als ungeprüft markiert |
+| Darstellung | reguläre Marker | Marker mit Plus-Abzeichen, Badge „Eigener Ort" |
+| in `build.js` eingebettet | ja | nein (Laufzeit-Abruf) |
+
+`tools/validate.js` prüft `eigene.json` deshalb nur strukturell (ID, Typ,
+Koordinaten in der Bounding-Box, keine ID-Kollision mit kuratierten
+Einträgen) und misst sie nicht an den kuratierten Regeln.
+
+### Einrichtung in Vercel
+
+Unter *Settings → Environment Variables* anlegen:
+
+| Variable | Wert |
+|---|---|
+| `GUIDE_REPO` | `tobiasscheid94-ui/Peleponnes` |
+| `GUIDE_BRANCH` | Branch, in den geschrieben wird (der, aus dem auch deployt wird) |
+| `GUIDE_GITHUB_TOKEN` | GitHub Fine-grained Token, nur dieses Repo, Berechtigung *Contents: Read and write* |
+| `GUIDE_WRITE_KEY` | frei gewähltes Passwort |
+
+Das Token entsteht unter *GitHub → Settings → Developer settings → Personal
+access tokens → Fine-grained tokens*. Nach dem Setzen der Variablen einmal
+neu deployen.
+
+Der `GUIDE_WRITE_KEY` wird beim ersten Speichern in der App abgefragt und
+danach auf dem Gerät gemerkt. Lesen ist offen (der Guide ist ohnehin
+öffentlich erreichbar), Schreiben braucht den Schlüssel — sonst trägt hier
+über kurz oder lang ein Bot ein.

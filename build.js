@@ -29,7 +29,10 @@ function stripDummyDataBlock(js) {
 }
 
 function loadContentData() {
-  const files = fs.readdirSync(DATA).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json', 'routes.json'].includes(f));
+  // eigene.json wird bewusst NICHT eingebettet: selbst erfasste Orte holt der
+  // Client zur Laufzeit von /api/places, damit ein neuer Ort sofort sichtbar
+  // ist. Mit einbetten gaebe es jeden Eintrag doppelt.
+  const files = fs.readdirSync(DATA).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json', 'routes.json', 'eigene.json'].includes(f));
   let entries = [];
   for (const file of files) {
     const parsed = JSON.parse(readText(path.join(DATA, file)));

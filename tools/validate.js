@@ -242,11 +242,53 @@ function checkRoutes(allIds) {
   }
 }
 
+// Selbst erfasste Orte (data/eigene.json, geschrieben von api/places.js).
+// Bewusst NICHT an den kuratierten Regeln gemessen: hier gibt es keine
+// Wortzahl-Vorgaben, kein touristTrapRisk und keine Faktenpruefung. Geprueft
+// wird nur, was strukturell stimmen muss, damit die App die Eintraege sauber
+// einhaengen kann.
+function checkOwnPlaces(allIds) {
+  const ownPath = path.join(DATA_DIR, 'eigene.json');
+  if (!fs.existsSync(ownPath)) return 0;
+  const file = 'eigene.json';
+  const entries = loadJson(ownPath);
+  if (!Array.isArray(entries)) {
+    if (entries !== null) errors.push(`[ERROR] ${file} :: Datei muss ein Array sein.`);
+    return 0;
+  }
+
+  const seen = new Set();
+  for (const e of entries) {
+    if (!e || typeof e !== 'object') { errors.push(`[ERROR] ${file} :: Eintrag ist kein Objekt.`); continue; }
+    if (!isNonEmptyString(e.id)) { err(e.id, file, `'id' fehlt oder leer.`); continue; }
+    if (seen.has(e.id)) err(e.id, file, `Doppelte id innerhalb von eigene.json.`);
+    seen.add(e.id);
+    if (allIds.has(e.id)) {
+      err(e.id, file, `id kollidiert mit einem kuratierten Eintrag in ${allIds.get(e.id)} – der kuratierte Eintrag wuerde in der App ueberdeckt.`);
+    }
+    if (!isNonEmptyString(e.name)) err(e.id, file, `'name' fehlt oder leer.`);
+    if (!TYPES.includes(e.type)) err(e.id, file, `'type' ungueltig: ${e.type}`);
+    if (e.region !== null && e.region !== undefined && !REGIONS.includes(e.region)) {
+      err(e.id, file, `'region' ungueltig: ${e.region}`);
+    }
+    if (!Array.isArray(e.coords) || e.coords.length !== 2 || e.coords.some((n) => typeof n !== 'number')) {
+      err(e.id, file, `'coords' muss [lat, lon] als Zahlen sein.`);
+    } else {
+      const [lat, lon] = e.coords;
+      if (lat < BBOX.minLat || lat > BBOX.maxLat || lon < BBOX.minLon || lon > BBOX.maxLon) {
+        err(e.id, file, `coords [${lat}, ${lon}] liegen ausserhalb der Peloponnes-Bounding-Box.`);
+      }
+    }
+    if (e.source !== 'user') err(e.id, file, `'source' muss 'user' sein, ist '${e.source}'.`);
+  }
+  return entries.length;
+}
+
 function main() {
   const habitatsPath = path.join(DATA_DIR, 'habitats.json');
   const habitats = fs.existsSync(habitatsPath) ? loadJson(habitatsPath) || {} : {};
 
-  const files = fs.readdirSync(DATA_DIR).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json', 'routes.json'].includes(f));
+  const files = fs.readdirSync(DATA_DIR).filter((f) => f.endsWith('.json') && !['schema.json', 'habitats.json', 'routes.json', 'eigene.json'].includes(f));
 
   if (files.length === 0) {
     console.log('Keine Regions-Datendateien in /data gefunden.');
@@ -291,8 +333,10 @@ function main() {
   }
 
   checkRoutes(allIds);
+  const ownCount = checkOwnPlaces(allIds);
 
-  console.log(`Geprueft: ${allEntries.length} Eintraege in ${files.length} Dateien.\n`);
+  console.log(`Geprueft: ${allEntries.length} kuratierte Eintraege in ${files.length} Dateien` +
+    (ownCount ? `, dazu ${ownCount} selbst erfasste Orte` : '') + '.\n');
 
   if (warnings.length) {
     console.log(`--- ${warnings.length} Warnung(en) ---`);

@@ -1,6 +1,6 @@
 {
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/peloponnes-guide.html" }
+    { "source": "/((?!api/).*)", "destination": "/peloponnes-guide.html" }
   ]
 }
