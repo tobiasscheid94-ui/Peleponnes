@@ -874,6 +874,7 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   var sheetNameEl = document.getElementById('sheet-name');
   var sheetNameGrEl = document.getElementById('sheet-name-gr');
   var sheetBadgesEl = document.getElementById('sheet-badges');
+  var sheetPreviewEl = document.getElementById('sheet-preview');
   var sheetBodyEl = document.getElementById('sheet-body');
   var sheetFavBtn = document.getElementById('sheet-fav');
   var sheetCloseBtn = document.getElementById('sheet-close');
@@ -1011,87 +1012,122 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     return '<h3>' + escapeHtml(title) + '</h3><ul class="species-grid">' + cards + '</ul>';
   }
 
+  // Jede render*Body-Funktion liefert jetzt eine Liste von Tabs statt eines
+  // einzelnen Fliesstext-Blocks -- gruppiert nach Absicht (Überblick/Vor
+  // Ort/Hintergrund), nicht nach Datenfeld, damit aus 3+ Bildschirmen
+  // linearem Scrollen drei kurze, fokussierte Abschnitte werden. Leere Tabs
+  // werden von renderTabsUI() automatisch ausgeblendet.
   function renderBeachBody(e) {
-    var html = '<p>' + escapeHtml(e.summary) + '</p>';
-    html += factGrid([
+    var ueberblick = '<p>' + escapeHtml(e.summary) + '</p>';
+    ueberblick += factGrid([
       factRow('hourglass', 'Zeitbedarf', e.timeNeeded),
       e.snorkeling ? factRow('waves', 'Schnorcheln', e.snorkeling.rating + '/5') : '',
-      e.crowding ? factRow('people', 'Belebtheit (Hochsaison)', e.crowding.peakSeason + '/5') : ''
+      e.crowding ? factRow('people', 'Belebtheit (Hochsaison)', e.crowding.peakSeason + '/5') : '',
+      e.access ? factRow('incline', 'Schwierigkeit', e.access.difficulty) : ''
     ]);
-    html += fieldRow('Untergrund', e.surface);
-    html += fieldRow('Meeresboden', e.seabed);
-    html += fieldRow('Einstieg', e.entry);
-    html += fieldRow('Barfußtauglich', e.barefootFriendly === true ? 'ja' : e.barefootFriendly === false ? 'nein' : null);
-    html += fieldRow('Schatten', e.shade);
-    html += fieldRow('Windexposition', e.windExposure);
-    if (e.crowding) {
-      html += '<h3>Belebtheit</h3><p>Hochsaison: ' + e.crowding.peakSeason + '/5 · Nebensaison: ' + e.crowding.shoulderSeason + '/5</p>';
-      if (e.crowding.timeOfDayNote) html += '<p>' + escapeHtml(e.crowding.timeOfDayNote) + '</p>';
+    ueberblick += fieldRow('Untergrund', e.surface);
+    ueberblick += fieldRow('Meeresboden', e.seabed);
+    ueberblick += fieldRow('Einstieg', e.entry);
+    ueberblick += fieldRow('Schatten', e.shade);
+    ueberblick += fieldRow('Barfußtauglich', e.barefootFriendly === true ? 'ja' : e.barefootFriendly === false ? 'nein' : null);
+
+    var vorOrt = fieldRow('Windexposition', e.windExposure);
+    if (e.crowding && (e.crowding.shoulderSeason != null || e.crowding.timeOfDayNote)) {
+      vorOrt += fieldRow('Belebtheit (Nebensaison)', e.crowding.shoulderSeason != null ? e.crowding.shoulderSeason + '/5' : null);
+      if (e.crowding.timeOfDayNote) vorOrt += '<p>' + escapeHtml(e.crowding.timeOfDayNote) + '</p>';
     }
-    html += listBlock('Achtung', e.hazards);
+    vorOrt += listBlock('Achtung', e.hazards);
     if (e.snorkeling) {
-      html += '<h3>Schnorcheln</h3>';
-      if (e.snorkeling.visibility) html += '<p>Sicht: ' + escapeHtml(e.snorkeling.visibility) + '</p>';
-      html += speciesListBlock('Habitat-typische Arten', e.snorkeling.speciesLikely);
-      html += speciesListBlock('Vorsicht', e.snorkeling.speciesCaution);
-      html += '<p class="species-note">' + escapeHtml(habitatsDisclaimer) + '</p>';
+      if (e.snorkeling.visibility) vorOrt += '<h3>Schnorcheln</h3><p>Sicht: ' + escapeHtml(e.snorkeling.visibility) + '</p>';
+      vorOrt += speciesListBlock('Habitat-typische Arten', e.snorkeling.speciesLikely);
+      vorOrt += speciesListBlock('Vorsicht', e.snorkeling.speciesCaution);
+      if ((e.snorkeling.speciesLikely && e.snorkeling.speciesLikely.length) || (e.snorkeling.speciesCaution && e.snorkeling.speciesCaution.length)) {
+        vorOrt += '<p class="species-note">' + escapeHtml(habitatsDisclaimer) + '</p>';
+      }
     }
     if (e.facilities) {
-      html += '<h3>Infrastruktur</h3>';
-      html += fieldRow('Liegen', e.facilities.sunbeds);
-      html += fieldRow('Taverna', e.facilities.taverna);
-      html += fieldRow('WC', e.facilities.wc === true ? 'ja' : e.facilities.wc === false ? 'nein' : 'nicht verifiziert');
-      html += fieldRow('Trinkwasser', e.facilities.freshwater === true ? 'ja' : e.facilities.freshwater === false ? 'nein' : 'nicht verifiziert');
-      html += fieldRow('Parken', e.facilities.parking || 'nicht verifiziert');
+      vorOrt += '<h3>Infrastruktur</h3>';
+      vorOrt += fieldRow('Liegen', e.facilities.sunbeds);
+      vorOrt += fieldRow('Taverna', e.facilities.taverna);
+      vorOrt += fieldRow('WC', e.facilities.wc === true ? 'ja' : e.facilities.wc === false ? 'nein' : 'nicht verifiziert');
+      vorOrt += fieldRow('Trinkwasser', e.facilities.freshwater === true ? 'ja' : e.facilities.freshwater === false ? 'nein' : 'nicht verifiziert');
+      vorOrt += fieldRow('Parken', e.facilities.parking || 'nicht verifiziert');
     }
     if (e.access) {
-      html += '<h3>Zugang</h3>';
-      html += fieldRow('Art', e.access.mode);
-      html += fieldRow('Gehzeit ab Parkplatz', e.access.minutesFromParking != null ? e.access.minutesFromParking + ' Min.' : null);
-      html += fieldRow('Wegqualität', e.access.roadQuality);
-      html += fieldRow('Schwierigkeit', e.access.difficulty);
+      vorOrt += '<h3>Zugang</h3>';
+      vorOrt += fieldRow('Art', e.access.mode);
+      vorOrt += fieldRow('Gehzeit ab Parkplatz', e.access.minutesFromParking != null ? e.access.minutesFromParking + ' Min.' : null);
+      vorOrt += fieldRow('Wegqualität', e.access.roadQuality);
     }
-    html += fieldRow('Nacktbaden toleriert', e.nudistTolerated === true ? 'ja' : e.nudistTolerated === false ? 'nein' : null);
-    html += fieldRow('Beste Zeit', e.bestTime);
-    html += fieldRow('Geschichte/Mythos', e.history);
-    return html;
+    vorOrt += fieldRow('Nacktbaden toleriert', e.nudistTolerated === true ? 'ja' : e.nudistTolerated === false ? 'nein' : null);
+    vorOrt += fieldRow('Beste Zeit', e.bestTime);
+
+    var hintergrund = fieldRow('Geschichte/Mythos', e.history);
+
+    return [
+      { id: 'ueberblick', label: 'Überblick', html: ueberblick },
+      { id: 'vor-ort', label: 'Vor Ort', html: vorOrt },
+      { id: 'hintergrund', label: 'Hintergrund', html: hintergrund }
+    ];
   }
 
   function renderSiteBody(e) {
-    var html = '<p>' + escapeHtml(e.summary) + '</p>';
-    html += factGrid([factRow('hourglass', 'Zeitbedarf', e.timeNeeded)]);
-    html += fieldRow('Epoche', (e.epoch || []).join(', '));
-    html += fieldRow('Datierung', e.dating);
-    if (e.whyItMatters) html += '<h3>Warum das zählt</h3><p>' + escapeHtml(e.whyItMatters) + '</p>';
-    if (e.whatYouSee) html += '<h3>Was man sieht</h3><p>' + escapeHtml(e.whatYouSee) + '</p>';
+    var ueberblick = '<p>' + escapeHtml(e.summary) + '</p>';
+    ueberblick += factGrid([factRow('hourglass', 'Zeitbedarf', e.timeNeeded)]);
+    if (e.epoch && e.epoch.length) {
+      ueberblick += '<div class="chip-row">' + e.epoch.map(function (ep) {
+        return '<span class="chip">' + escapeHtml(ep) + '</span>';
+      }).join('') + '</div>';
+    }
+    if (e.whyItMatters) ueberblick += '<h3>Warum das zählt</h3><p>' + escapeHtml(e.whyItMatters) + '</p>';
+
+    var vorOrt = '';
+    if (e.whatYouSee) vorOrt += '<h3>Was man sieht</h3><p>' + escapeHtml(e.whatYouSee) + '</p>';
     if (e.walkthrough && e.walkthrough.length) {
-      html += '<h3>Rundgang</h3><ul>' + e.walkthrough.map(function (w) {
+      vorOrt += '<h3>Rundgang</h3><ul>' + e.walkthrough.map(function (w) {
         return '<li><strong>' + escapeHtml(w.stop) + ':</strong> ' + escapeHtml(w.note) + '</li>';
       }).join('') + '</ul>';
     }
-    html += fieldRow('Gelände', e.terrain);
-    html += fieldRow('Schatten/Hitze', e.shadeAndHeat);
-    html += fieldRow('Museum vor Ort', e.museumOnSite === true ? 'ja' : e.museumOnSite === false ? 'nein' : null);
-    if (e.misconceptions) html += '<h3>Verbreitete Irrtümer</h3><p>' + escapeHtml(e.misconceptions) + '</p>';
-    if (e.readingHooks) html += '<h3>Anknüpfungspunkte</h3><p>' + escapeHtml(e.readingHooks) + '</p>';
-    html += fieldRow('Ticket', e.ticketInfo || 'nicht verifiziert');
-    return html;
+    vorOrt += factGrid([
+      factRow(null, 'Museum vor Ort', e.museumOnSite === true ? 'ja' : e.museumOnSite === false ? 'nein' : null),
+      factRow(null, 'Ticket', e.ticketInfo || 'nicht verifiziert')
+    ]);
+    vorOrt += fieldRow('Gelände', e.terrain);
+    vorOrt += fieldRow('Schatten/Hitze', e.shadeAndHeat);
+
+    var hintergrund = fieldRow('Datierung', e.dating);
+    if (e.misconceptions) hintergrund += '<h3>Verbreitete Irrtümer</h3><p>' + escapeHtml(e.misconceptions) + '</p>';
+    if (e.readingHooks) hintergrund += '<h3>Anknüpfungspunkte</h3><p>' + escapeHtml(e.readingHooks) + '</p>';
+
+    return [
+      { id: 'ueberblick', label: 'Überblick', html: ueberblick },
+      { id: 'vor-ort', label: 'Vor Ort', html: vorOrt },
+      { id: 'hintergrund', label: 'Hintergrund', html: hintergrund }
+    ];
   }
 
   function renderTownBody(e) {
-    var html = '<p>' + escapeHtml(e.summary) + '</p>';
-    html += factGrid([factRow('hourglass', 'Zeitbedarf', e.timeNeeded)]);
-    if (e.character) html += '<h3>Charakter</h3><p>' + escapeHtml(e.character) + '</p>';
+    var ueberblick = '<p>' + escapeHtml(e.summary) + '</p>';
+    ueberblick += factGrid([factRow('hourglass', 'Zeitbedarf', e.timeNeeded)]);
+    if (e.character) ueberblick += '<h3>Charakter</h3><p>' + escapeHtml(e.character) + '</p>';
+
+    var vorOrt = listBlock('Was tun', e.whatToDo);
+    vorOrt += fieldRow('Parken', e.parking);
+    if (e.foodScene) vorOrt += '<h3>Essen</h3><p>' + escapeHtml(e.foodScene) + '</p>';
+    if (e.walkingTour) vorOrt += renderWalkingTourSection(e);
+
+    var hintergrund = '';
     if (e.historyTimeline && e.historyTimeline.length) {
-      html += '<h3>Geschichte</h3><ul>' + e.historyTimeline.map(function (h) {
+      hintergrund += '<ul>' + e.historyTimeline.map(function (h) {
         return '<li><strong>' + escapeHtml(h.period) + ':</strong> ' + escapeHtml(h.note) + '</li>';
       }).join('') + '</ul>';
     }
-    html += listBlock('Was tun', e.whatToDo);
-    html += fieldRow('Parken', e.parking);
-    if (e.foodScene) html += '<h3>Essen</h3><p>' + escapeHtml(e.foodScene) + '</p>';
-    if (e.walkingTour) html += renderWalkingTourSection(e);
-    return html;
+
+    return [
+      { id: 'ueberblick', label: 'Überblick', html: ueberblick },
+      { id: 'vor-ort', label: 'Vor Ort', html: vorOrt },
+      { id: 'hintergrund', label: 'Hintergrund', html: hintergrund }
+    ];
   }
 
   function renderWalkingTourSection(e) {
@@ -1117,39 +1153,76 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
   };
 
   function renderGenericBody(e) {
-    var html = '<p>' + escapeHtml(e.summary) + '</p>';
+    var ueberblick = '<p>' + escapeHtml(e.summary) + '</p>';
     // Nur kurze, verlaesslich knappe Werte in die Fakten-Zeilen -- durationHours
     // ist bei mehreren Wanderungen ein ganzer Hinweissatz (widersprechende
     // Quellen zu Distanz/Dauer), keine kurze Kennzahl, und bleibt deshalb unten
     // als normaler Fliesstext.
-    html += factGrid([
+    ueberblick += factGrid([
       factRow('hourglass', 'Zeitbedarf', e.timeNeeded),
       factRow('incline', 'Schwierigkeit', e.difficulty || (e.access && e.access.difficulty)),
-      factRow('ruler', 'Distanz', e.distanceKm != null ? e.distanceKm + ' km' : null)
+      factRow('ruler', 'Distanz', e.distanceKm != null ? e.distanceKm + ' km' : null),
+      factRow(null, 'Höhenmeter', e.elevationGainM != null ? e.elevationGainM + ' m' : null)
     ]);
-    ['epoch', 'dating', 'whyItMatters', 'whatYouSee', 'terrain', 'shadeAndHeat',
-      'durationHours', 'elevationGainM', 'waymarking', 'bestTime', 'sunsetSunrise'].forEach(function (key) {
+
+    var vorOrt = '';
+    ['terrain', 'shadeAndHeat', 'durationHours', 'waymarking', 'bestTime', 'sunsetSunrise'].forEach(function (key) {
       var v = e[key];
       if (Array.isArray(v)) v = v.join(', ');
-      html += fieldRow(GENERIC_FIELD_LABELS[key] || key, v);
+      vorOrt += fieldRow(GENERIC_FIELD_LABELS[key] || key, v);
     });
-    if (e.access) {
-      html += fieldRow('Zugang', e.access.mode);
-    }
-    return html;
+    if (e.access) vorOrt += fieldRow('Zugang', e.access.mode);
+
+    var hintergrund = '';
+    ['epoch', 'dating', 'whyItMatters', 'whatYouSee'].forEach(function (key) {
+      var v = e[key];
+      if (Array.isArray(v)) v = v.join(', ');
+      hintergrund += fieldRow(GENERIC_FIELD_LABELS[key] || key, v);
+    });
+
+    return [
+      { id: 'ueberblick', label: 'Überblick', html: ueberblick },
+      { id: 'vor-ort', label: 'Vor Ort', html: vorOrt },
+      { id: 'hintergrund', label: 'Hintergrund', html: hintergrund }
+    ];
+  }
+
+  // Baut Tab-Leiste + Panels aus einer Liste { id, label, html }. Leere Tabs
+  // (kein Inhalt fuer diesen Eintrag) werden herausgefiltert statt als leerer
+  // Reiter angezeigt zu werden. Bleibt nur ein Tab uebrig, entfaellt die
+  // Tab-Leiste komplett -- eine einzelne Reiterbeschriftung waere unnoetig.
+  function renderTabsUI(tabs) {
+    var visible = tabs.filter(function (t) { return t && t.html && t.html.trim(); });
+    if (!visible.length) return '';
+    if (visible.length === 1) return visible[0].html;
+    var bar = '<div class="sheet-tabs">' + visible.map(function (t, i) {
+      return '<button type="button" class="sheet-tab' + (i === 0 ? ' active' : '') +
+        '" data-sheet-tab="' + escapeHtml(t.id) + '">' + escapeHtml(t.label) + '</button>';
+    }).join('') + '</div>';
+    var panels = visible.map(function (t, i) {
+      return '<div class="sheet-tab-panel" data-sheet-panel="' + escapeHtml(t.id) + '"' + (i === 0 ? '' : ' hidden') + '>' + t.html + '</div>';
+    }).join('');
+    return '<div class="sheet-tabs-wrap">' + bar + panels + '</div>';
   }
 
   function renderSheetBody(e) {
-    // Selbst erfasste Orte haben ein reduziertes Feldset und eine eigene Ansicht.
+    // Selbst erfasste Orte haben ein reduziertes Feldset ohne Tab-Struktur.
     if (e.source === 'user') return renderUserBody(e);
-    if (e.type === 'beach') return renderBeachBody(e);
-    // monastery_castle teilt sich praktisch dieselbe Feldstruktur wie site
-    // (epoch/dating/whyItMatters/whatYouSee/walkthrough/misconceptions/...)
-    // und bekommt daher dieselbe, vollstaendigere Darstellung statt der
-    // generischen Fallback-Ansicht.
-    if (e.type === 'site' || e.type === 'monastery_castle') return renderSiteBody(e);
-    if (e.type === 'town') return renderTownBody(e);
-    return renderGenericBody(e);
+    var tabs;
+    if (e.type === 'beach') {
+      tabs = renderBeachBody(e);
+    } else if (e.type === 'site' || e.type === 'monastery_castle') {
+      // monastery_castle teilt sich praktisch dieselbe Feldstruktur wie site
+      // (epoch/dating/whyItMatters/whatYouSee/walkthrough/misconceptions/...)
+      // und bekommt daher dieselbe, vollstaendigere Darstellung statt der
+      // generischen Fallback-Ansicht.
+      tabs = renderSiteBody(e);
+    } else if (e.type === 'town') {
+      tabs = renderTownBody(e);
+    } else {
+      tabs = renderGenericBody(e);
+    }
+    return renderTabsUI(tabs);
   }
 
   function openSheet(id) {
@@ -1169,6 +1242,18 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     if (e.confidence === 'low') badges += '<span class="badge badge-low-confidence">Unsichere Angaben</span>';
     if (e.coordSource === 'approx') badges += '<span class="badge">Position ungefähr</span>';
     sheetBadgesEl.innerHTML = badges;
+
+    // Vorschau bleibt im fixen Header sichtbar, unabhaengig vom Sheet-Zustand
+    // (peek/half/full) und vom Scroll-/Tab-Stand darunter -- im peek-Zustand
+    // ist das die einzige Information, die ueber den Namen hinausgeht.
+    if (e.timeNeeded || e.summary) {
+      sheetPreviewEl.innerHTML =
+        (e.timeNeeded ? '<span class="fact">' + escapeHtml(e.timeNeeded) + '</span>' : '') +
+        (e.summary ? '<span class="summary">' + escapeHtml(e.summary) + '</span>' : '');
+      sheetPreviewEl.hidden = false;
+    } else {
+      sheetPreviewEl.hidden = true;
+    }
 
     var bodyHtml = renderRatingWidget(id);
     bodyHtml += renderSheetBody(e);
@@ -1256,6 +1341,18 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     var openBtn = ev.target.closest('[data-open-entry]');
     if (openBtn) {
       openSheet(openBtn.getAttribute('data-open-entry'));
+      return;
+    }
+    var sheetTabBtn = ev.target.closest('[data-sheet-tab]');
+    if (sheetTabBtn) {
+      var tabsWrap = sheetTabBtn.closest('.sheet-tabs-wrap');
+      tabsWrap.querySelectorAll('[data-sheet-tab]').forEach(function (b) { b.classList.remove('active'); });
+      sheetTabBtn.classList.add('active');
+      var targetTab = sheetTabBtn.getAttribute('data-sheet-tab');
+      tabsWrap.querySelectorAll('[data-sheet-panel]').forEach(function (p) {
+        p.hidden = p.getAttribute('data-sheet-panel') !== targetTab;
+      });
+      sheetBodyEl.scrollTop = 0;
       return;
     }
     var tourStartBtn = ev.target.closest('[data-tour-start]');
@@ -1460,10 +1557,14 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     locateBtn.hidden = true;
   }
 
-  // ---------- Favoriten-Modal ----------
+  // ---------- "Ich"-Modal (Gemerkt/Bewertet/Daten) ----------
+  // War frueher ein einzelnes "Favoriten"-Modal, das Favoriten, Bewertungen,
+  // Empfehlungen und Export/Import untereinander wegscrollte -- vier Themen,
+  // die nur zufaellig zusammen entstanden sind. Jetzt drei Reiter nach
+  // Absicht, dasselbe Muster wie bei den Orts-Tabs im Sheet.
 
-  var favoritesToggle = document.getElementById('favorites-toggle');
-  var favoritesModal = document.getElementById('favorites-modal');
+  var profileToggle = document.getElementById('profile-toggle');
+  var profileModal = document.getElementById('profile-modal');
   var favoritesListEl = document.getElementById('favorites-list');
   var ratingsListEl = document.getElementById('ratings-list');
   var recommendationsListEl = document.getElementById('recommendations-list');
@@ -1526,20 +1627,30 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     }).join('');
   }
 
-  function renderFavoritesModal() {
+  function renderProfileModal() {
     renderFavoritesList();
     renderRatingsList();
     renderRecommendationsList();
   }
 
-  favoritesToggle.addEventListener('click', function () {
-    renderFavoritesModal();
-    favoritesModal.hidden = false;
+  profileToggle.addEventListener('click', function () {
+    renderProfileModal();
+    profileModal.hidden = false;
   });
-  favoritesModal.addEventListener('click', function (ev) {
+  profileModal.addEventListener('click', function (ev) {
+    var tabBtn = ev.target.closest('[data-profile-tab]');
+    if (tabBtn) {
+      var target = tabBtn.getAttribute('data-profile-tab');
+      profileModal.querySelectorAll('[data-profile-tab]').forEach(function (b) { b.classList.remove('active'); });
+      tabBtn.classList.add('active');
+      profileModal.querySelectorAll('[data-profile-panel]').forEach(function (p) {
+        p.hidden = p.getAttribute('data-profile-panel') !== target;
+      });
+      return;
+    }
     var btn = ev.target.closest('[data-open-entry-modal]');
     if (!btn) return;
-    favoritesModal.hidden = true;
+    profileModal.hidden = true;
     openSheet(btn.getAttribute('data-open-entry-modal'));
   });
   document.getElementById('favorites-export').addEventListener('click', function () {
@@ -1565,7 +1676,7 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
         visits = importedVisits;
         persistVisits();
       }
-      renderFavoritesModal();
+      renderProfileModal();
       renderMarkers();
     } catch (e) {
       window.alert('Import fehlgeschlagen: ' + e.message);
