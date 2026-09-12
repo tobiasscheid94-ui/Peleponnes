@@ -531,7 +531,7 @@ html, body {
 }
 .species-card__no-icon {
   display: inline-block;
-  width: 26px;
+  width: 44px;
   flex-shrink: 0;
 }
 

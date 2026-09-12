@@ -1200,7 +1200,7 @@ html, body {
 }
 .species-card__no-icon {
   display: inline-block;
-  width: 26px;
+  width: 44px;
   flex-shrink: 0;
 }
 
@@ -2774,36 +2774,145 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
       items.map(function (i) { return '<li>' + escapeHtml(i) + '</li>'; }).join('') + '</ul>';
   }
 
-  // ---------- Arten-Icons (Schnorcheln) ----------
-  // Handgezeichnete, stark vereinfachte Silhouetten -- keine wissenschaftliche
-  // Illustration, sondern ein wiedererkennbares Icon pro Artengruppe, im
-  // selben Stil wie die Kartenmarker (flache SVG-Formen, keine Fotos/externen
-  // Assets). speciesLikely/speciesCaution enthalten laut validate.js nur
+  // ---------- Arten-Illustrationen (Schnorcheln) ----------
+  // Handgezeichnete, mehrfarbige Illustrationen mit artspezifischen Merkmalen
+  // (Diplodus' schwarzer Schwanzfleck, das schwarze Ruecken-Gift-Flossen des
+  // Petermaennchens, die violettschwarze Faerbung des Seeigels Paracentrotus
+  // lividus u.a.) statt einfarbiger Icon-Silhouetten -- naeher an einer
+  // Bestimmungstafel als an einem UI-Icon, aber weiterhin reines Inline-SVG:
+  // keine Fotos, kein externes Bild-Hosting, kein zusaetzliches Netzwerk-
+  // Request. speciesLikely/speciesCaution enthalten laut validate.js nur
   // exakte Werte aus habitats.json -- die Menge moeglicher Texte ist also
   // geschlossen, eine Stichwort-Zuordnung reicht und bleibt robust gegenueber
-  // den leicht unterschiedlichen Formulierungen je Habitat.
-  var FISH_BODY = 'M2,12 C2,8 6,6 11,6 C15,6 18,8.5 19,11 L23,7.5 V16.5 L19,13 C18,15.5 15,18 11,18 C6,18 2,16 2,12 Z';
-  var FISH_EYE = '<circle cx="7.5" cy="10.5" r="1.1" fill="#fff"/>';
-  var FISH_SPIKES = '<path d="M6,7 L7,3.5 L8,7 M9.3,6.3 L10.3,3 L11.3,6.3 M12.5,6 L13.5,3 L14.5,6" fill="none" stroke-width="1.2" stroke-linecap="round"/>';
-
+  // den leicht unterschiedlichen Formulierungen je Habitat. Jede Form traegt
+  // ihre Farben selbst (kein gemeinsames fg/stroke mehr), weil echte Tiere
+  // aus mehreren Farbtoenen bestehen statt aus einer Silhouette.
   var SPECIES_ICONS = {
-    fish: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<path d="' + FISH_BODY + '"/>' + FISH_EYE },
-    fishSpiky: { bg: '#fbecd0', fg: '#8a5813', shape: '<path d="' + FISH_BODY + '"/>' + FISH_EYE + FISH_SPIKES },
-    eel: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<path d="M2,12 C4,6 8,18 12,12 C16,6 20,18 22,12" fill="none" stroke-width="2.6" stroke-linecap="round"/><circle cx="3" cy="11.3" r="1" fill="#2f7f9e"/>' },
-    flatfish: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<path d="M2,12 C2,9 7,7 12,7 C17,7 22,9 22,12 C22,15 17,17 12,17 C7,17 2,15 2,12 Z"/><circle cx="7" cy="9.6" r="1" fill="#fff"/><circle cx="9.3" cy="8.6" r="1" fill="#fff"/>' },
-    pipefish: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<path d="M2,14 C8,11.5 14,9.5 22,7" fill="none" stroke-width="2" stroke-linecap="round"/><circle cx="3" cy="13.7" r="0.9" fill="#2f7f9e"/>' },
-    seahorse: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<circle cx="15" cy="6.3" r="2.4"/><path d="M17.2,5.3 L20.5,4.5 L18,7.3 Z"/><path d="M13,8.3 C10,9.3 9,12 12,13 C15,14 15,16.5 11.3,17.3 C9.3,17.7 9,19.5 11,20" fill="none" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>' },
-    ray: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<path d="M12,4 L20,12 L12,15.5 L4,12 Z"/><path d="M12,15.5 L12,22" fill="none" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="9.5" r="0.8" fill="#fff"/><circle cx="14" cy="9.5" r="0.8" fill="#fff"/>' },
-    octopus: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<circle cx="12" cy="9" r="6"/><path d="M7,13 C6,17 8,19 6,22 M10,14 C10,18 12,19 11,22 M14,14 C14,18 12,19 13,22 M17,13 C18,17 16,19 18,22" fill="none" stroke-width="1.6" stroke-linecap="round"/>' },
-    crab: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<circle cx="13" cy="12" r="6"/><path d="M13,12 m-3,0 a3,3 0 1,1 6,0 a2,2 0 1,1 -4,0" fill="none" stroke="#fff" stroke-width="1"/><path d="M7,9 L3,7 M7,15 L3,17" fill="none" stroke-width="1.4" stroke-linecap="round"/>' },
-    urchin: { bg: '#fbecd0', fg: '#8a5813', shape: '<circle cx="12" cy="12" r="4"/><path d="M12,12 L12,4 M12,12 L12,20 M12,12 L4,12 M12,12 L20,12 M12,12 L6,6 M12,12 L18,18 M12,12 L18,6 M12,12 L6,18" fill="none" stroke-width="1.3" stroke-linecap="round"/>' },
-    cucumber: { bg: '#dfeef2', fg: '#2f7f9e', shape: '<path d="M4,12 C4,9 7,8 12,8 C17,8 20,9 20,12 C20,15 17,16 12,16 C7,16 4,15 4,12 Z"/>' },
-    worm: { bg: '#fbecd0', fg: '#8a5813', shape: '<path d="M3,14 C6,10 9,17 12,13 C15,9 18,16 21,12" fill="none" stroke-width="2.4" stroke-linecap="round"/>' },
-    jellyfish: { bg: '#fbecd0', fg: '#8a5813', shape: '<path d="M5,11 A7,6 0 0 1 19,11 Z"/><path d="M8,11 C7,15 9,17 8,21 M12,11 C11,15 13,17 12,21 M16,11 C15,15 17,17 16,21" fill="none" stroke-width="1.3" stroke-linecap="round"/>' }
+    seabream: { bg: '#dfeef2', shape:
+      '<ellipse cx="15" cy="17" rx="9.5" ry="6" fill="#c7ccc0"/>' +
+      '<path d="M24,17 L30,10 L26.5,17 L30,24 Z" fill="#8a9186"/>' +
+      '<path d="M9.5,11 Q14,5.5 18,11 Z" fill="#8a9186"/>' +
+      '<path d="M8,12 L8,22 M11,10.8 L11,23.2 M14.5,10.5 L14.5,23.5 M18,11.3 L18,22.7" stroke="#3a3b32" stroke-width="1.3" opacity="0.5"/>' +
+      '<circle cx="22.5" cy="17" r="1.4" fill="#232219"/>' +
+      '<circle cx="7.3" cy="15.5" r="1.7" fill="#fff"/><circle cx="7.7" cy="15.5" r="0.85" fill="#1c1b19"/>'
+    },
+    wrasse: { bg: '#dfeef2', shape:
+      '<path d="M4,17 C4,12.5 9,10 15,10 C21,10 26,12.8 28,17 C26,21.2 21,24 15,24 C9,24 4,21.5 4,17 Z" fill="#3f7d5c"/>' +
+      '<path d="M15,10 C19,10.6 23,12.8 25,15.5 C21,14.5 17,14.3 13,15 Z" fill="#d98a3d" opacity="0.9"/>' +
+      '<path d="M28,17 L32,13 L30,17 L32,21 Z" fill="#2c5940"/>' +
+      '<path d="M10,11.5 Q14,8.3 18,11 Z" fill="#2c5940"/>' +
+      '<circle cx="7.5" cy="16.3" r="1.6" fill="#fff"/><circle cx="7.9" cy="16.3" r="0.8" fill="#1c1b19"/>' +
+      '<path d="M4,18 Q6.5,19.5 4.7,21" stroke="#2c5940" stroke-width="1.1" fill="none"/>'
+    },
+    mullet: { bg: '#dfeef2', shape:
+      '<ellipse cx="16" cy="17" rx="11" ry="4.8" fill="#b7c4c9"/>' +
+      '<ellipse cx="16" cy="19.8" rx="9.5" ry="1.7" fill="#e8edee" opacity="0.85"/>' +
+      '<path d="M27,17 L33,11.5 L29.5,17 L33,22.5 Z" fill="#7d8c91"/>' +
+      '<path d="M13.5,12 Q17,8.6 20.5,12 Z" fill="#7d8c91"/>' +
+      '<path d="M8,17 L8,14 M11,17 L11,14.3" stroke="#7d8c91" stroke-width="1" opacity="0.7"/>' +
+      '<circle cx="6.6" cy="16.2" r="1.5" fill="#fff"/><circle cx="7" cy="16.2" r="0.75" fill="#1c1b19"/>'
+    },
+    sandsmelt: { bg: '#dfeef2', shape:
+      '<ellipse cx="12" cy="13.5" rx="7.5" ry="2.6" fill="#c3ccce"/>' +
+      '<path d="M5.5,13.5 L18.5,13.5" stroke="#8b979a" stroke-width="0.8" opacity="0.8"/>' +
+      '<path d="M19.3,13.5 L23.3,11 L21.2,13.5 L23.3,16 Z" fill="#8b979a"/>' +
+      '<circle cx="6.4" cy="13.2" r="1" fill="#1c1b19"/>' +
+      '<ellipse cx="19" cy="21.5" rx="6.8" ry="2.4" fill="#b7c1c3" opacity="0.95"/>' +
+      '<path d="M25.3,21.5 L29,19.1 L27.1,21.5 L29,23.9 Z" fill="#7d8c91" opacity="0.95"/>' +
+      '<circle cx="13.5" cy="21.2" r="0.9" fill="#1c1b19"/>'
+    },
+    goby: { bg: '#dfeef2', shape:
+      '<ellipse cx="15" cy="19.5" rx="9" ry="4.2" fill="#a9906b"/>' +
+      '<circle cx="11" cy="17.8" r="1.5" fill="#7a6449"/><circle cx="16" cy="20.5" r="1.7" fill="#7a6449"/><circle cx="20.5" cy="18.2" r="1.3" fill="#7a6449"/>' +
+      '<path d="M23,19.5 L27.5,16.6 L25.5,19.5 L27.5,22.4 Z" fill="#7a6449"/>' +
+      '<path d="M9.5,15.6 Q12.5,13 15,15.6 Z" fill="#7a6449"/>' +
+      '<circle cx="8" cy="18.5" r="1.7" fill="#fff"/><circle cx="8.4" cy="18.5" r="0.85" fill="#1c1b19"/>'
+    },
+    grouper: { bg: '#dfeef2', shape:
+      '<path d="M4,18 C4,12 10,8.5 17,8.5 C24,8.5 29,13 29,18 C29,23 24,27 17,27 C10,27 4,24 4,18 Z" fill="#6b5a3d"/>' +
+      '<circle cx="10.5" cy="14.5" r="1.7" fill="#4a3f2a"/><circle cx="16" cy="11.7" r="1.4" fill="#4a3f2a"/><circle cx="20" cy="16" r="1.9" fill="#4a3f2a"/><circle cx="12.5" cy="21" r="1.5" fill="#4a3f2a"/><circle cx="21" cy="22" r="1.6" fill="#4a3f2a"/>' +
+      '<path d="M4,18 C2.7,16.3 2.7,19.7 4,18 Z" fill="#3a3021"/>' +
+      '<circle cx="7.7" cy="14.2" r="1.8" fill="#fff"/><circle cx="8.1" cy="14.2" r="0.9" fill="#1c1b19"/>'
+    },
+    eel: { bg: '#dfeef2', shape:
+      '<path d="M3,20 C8,12 13,26 18,18 C23,11 27,22 32,15" fill="none" stroke="#8a6d3b" stroke-width="5.8" stroke-linecap="round"/>' +
+      '<circle cx="6.5" cy="17.6" r="1.2" fill="#4a3820"/><circle cx="14" cy="20.5" r="1.1" fill="#4a3820"/><circle cx="21.5" cy="16" r="1.2" fill="#4a3820"/><circle cx="28" cy="19.5" r="1.1" fill="#4a3820"/>' +
+      '<circle cx="4.3" cy="19" r="1.4" fill="#fff"/><circle cx="4.6" cy="19" r="0.7" fill="#1c1b19"/>'
+    },
+    flatfish: { bg: '#dfeef2', shape:
+      '<ellipse cx="16" cy="17" rx="11.5" ry="6.8" fill="#b39a72"/>' +
+      '<circle cx="10.5" cy="13.5" r="1.2" fill="#7a6142"/><circle cx="16" cy="12.5" r="1.1" fill="#7a6142"/><circle cx="20.5" cy="14.8" r="1.3" fill="#7a6142"/><circle cx="13.5" cy="19" r="1.1" fill="#7a6142"/><circle cx="19.5" cy="20.3" r="1.2" fill="#7a6142"/>' +
+      '<circle cx="9.8" cy="10.5" r="1.6" fill="#fff"/><circle cx="10.2" cy="10.5" r="0.8" fill="#1c1b19"/>' +
+      '<circle cx="13.3" cy="9.7" r="1.5" fill="#fff"/><circle cx="13.7" cy="9.7" r="0.75" fill="#1c1b19"/>'
+    },
+    pipefish: { bg: '#dfeef2', shape:
+      '<path d="M2,20 C9,17.3 16,18.3 23,16 L29,14.5" fill="none" stroke="#8a9166" stroke-width="2.3" stroke-linecap="round"/>' +
+      '<path d="M29,14.5 L32,13.6" stroke="#8a9166" stroke-width="1.4" stroke-linecap="round"/>' +
+      '<path d="M8,18.6 L8,20.2 M14,17.4 L14,19 M20,16.5 L20,18" stroke="#5c6440" stroke-width="0.9"/>' +
+      '<circle cx="3.2" cy="19.6" r="1.05" fill="#1c1b19"/>'
+    },
+    seahorse: { bg: '#dfeef2', shape:
+      '<circle cx="19" cy="9" r="3.6" fill="#b58a4a"/>' +
+      '<path d="M21.5,7.5 L26,6 L22.5,10 Z" fill="#b58a4a"/>' +
+      '<path d="M16.5,12 C12,13.7 9.5,18 14,19.8 C19.5,22 19.5,26.3 14,27.7 C11,28.5 10.3,31.8 14,33" fill="none" stroke="#b58a4a" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M13.7,16 L11.2,16.5 M14.2,20.7 L11.7,21.3 M13.7,25.3 L11.3,26" stroke="#8a6a38" stroke-width="1.1"/>' +
+      '<circle cx="18.2" cy="7.9" r="1" fill="#fff"/><circle cx="18.4" cy="7.9" r="0.5" fill="#1c1b19"/>'
+    },
+    ray: { bg: '#fbecd0', shape:
+      '<path d="M16,5 L28,17 L16,23 L4,17 Z" fill="#7d746a"/>' +
+      '<path d="M16,23 L16,32" stroke="#5c554a" stroke-width="1.9" stroke-linecap="round"/>' +
+      '<path d="M16,29 L18.5,27.3" stroke="#8a5813" stroke-width="1.7" stroke-linecap="round"/>' +
+      '<circle cx="13" cy="13" r="1.1" fill="#4a4238"/><circle cx="19" cy="13" r="1.1" fill="#4a4238"/>' +
+      '<ellipse cx="16" cy="17.5" rx="7.5" ry="3.2" fill="#948b7e" opacity="0.55"/>'
+    },
+    octopus: { bg: '#dfeef2', shape:
+      '<path d="M10,11 C10,5.5 24,5.5 24,11 C24,16 20,17.7 17,17.7 C14,17.7 10,16 10,11 Z" fill="#8a5040"/>' +
+      '<path d="M12,16.5 C10,22 13,25.5 10,31 M15.3,17.5 C14.3,23 17.3,25.5 15.3,32 M18.7,17.5 C19.7,23 16.7,25.5 18.7,31.5 M22,16.5 C24,22 21,25.5 24,30.5" fill="none" stroke="#8a5040" stroke-width="2.3" stroke-linecap="round"/>' +
+      '<circle cx="13.5" cy="10.3" r="1.6" fill="#fff"/><circle cx="14" cy="10.3" r="0.8" fill="#1c1b19"/>' +
+      '<circle cx="20.5" cy="10.3" r="1.6" fill="#fff"/><circle cx="21" cy="10.3" r="0.8" fill="#1c1b19"/>'
+    },
+    crab: { bg: '#dfeef2', shape:
+      '<circle cx="18" cy="17" r="8.5" fill="#c9a876"/>' +
+      '<path d="M18,17 m-5.3,0 a5.3,5.3 0 1,1 10.6,0 a3.5,3.5 0 1,1 -7,0 a2.1,2.1 0 1,1 4.2,0" fill="none" stroke="#a0442c" stroke-width="1.4" opacity="0.85"/>' +
+      '<path d="M9.5,12.5 L3.5,9 M9.5,21.5 L3.5,25" stroke="#a0442c" stroke-width="2.1" stroke-linecap="round"/>' +
+      '<path d="M3.5,9 L1,6 M3.5,9 L1.3,11 M3.5,25 L1.3,22.5 M3.5,25 L1.3,27.5" stroke="#a0442c" stroke-width="1.7" stroke-linecap="round"/>' +
+      '<circle cx="8.7" cy="13" r="1.05" fill="#1c1b19"/>'
+    },
+    urchin: { bg: '#fbecd0', shape:
+      '<circle cx="16" cy="16" r="6.8" fill="#2e2440"/>' +
+      '<path d="M16,16 L16,2 M16,16 L16,30 M16,16 L2,16 M16,16 L30,16 M16,16 L6,6 M16,16 L26,26 M16,16 L26,6 M16,16 L6,26 M16,16 L9,3 M16,16 L23,29 M16,16 L3,9 M16,16 L29,23 M16,16 L3,23 M16,16 L29,9 M16,16 L9,29 M16,16 L23,3" stroke="#4a3a60" stroke-width="1.2" stroke-linecap="round"/>' +
+      '<circle cx="13.5" cy="13.5" r="1.6" fill="#5a4a78" opacity="0.7"/>'
+    },
+    cucumber: { bg: '#dfeef2', shape:
+      '<path d="M4,17 C4,12.5 9,10.5 16,10.5 C23,10.5 28,12.5 28,17 C28,21.5 23,23.5 16,23.5 C9,23.5 4,21.5 4,17 Z" fill="#6b5842"/>' +
+      '<circle cx="9.5" cy="14" r="1" fill="#4a3c2c"/><circle cx="14.5" cy="12.6" r="1" fill="#4a3c2c"/><circle cx="19.5" cy="13.4" r="1" fill="#4a3c2c"/><circle cx="24" cy="14.9" r="1" fill="#4a3c2c"/>' +
+      '<circle cx="11.5" cy="20" r="1" fill="#4a3c2c"/><circle cx="17.5" cy="21" r="1" fill="#4a3c2c"/><circle cx="23" cy="19.8" r="1" fill="#4a3c2c"/>'
+    },
+    worm: { bg: '#fbecd0', shape:
+      '<path d="M3,20 C8,14 13,25 18,19 C23,13 27,23 32,17" fill="none" stroke="#a0442c" stroke-width="3.4" stroke-linecap="round"/>' +
+      '<path d="M6.5,18 L5.3,15 M6.5,18 L5.3,21 M11.5,21.3 L10.3,18.3 M11.5,21.3 L10.3,24.3 M16.5,18 L15.3,15 M16.5,18 L15.3,21 M21.5,21.3 L20.3,18.3 M21.5,21.3 L20.3,24.3 M26,17.5 L24.9,14.7" stroke="#7a2e1c" stroke-width="1" stroke-linecap="round"/>'
+    },
+    jellyfish: { bg: '#fbecd0', shape:
+      '<path d="M8,15 A9,7.7 0 0 1 28,15 Z" fill="#b8cdd6" opacity="0.92"/>' +
+      '<path d="M10.5,15.5 C10.5,18.5 12.8,16.2 12.8,19.2 C12.8,22.2 10.5,20.8 10.5,25.5 M15.3,15.8 C15.3,18.8 17.6,16.5 17.6,19.6 C17.6,22.6 15.3,21.3 15.3,27 M20.2,15.8 C20.2,18.8 22.5,16.5 22.5,19.6 C22.5,22.6 20.2,21.3 20.2,25.7 M25,15.5 C25,18.5 27.3,16.2 27.3,19.2 C27.3,22.2 25,20.8 25,24.7" fill="none" stroke="#7fa3ae" stroke-width="1.3" stroke-linecap="round"/>'
+    },
+    weever: { bg: '#fbecd0', shape:
+      '<path d="M4,21 C4,17.5 9,15.8 15,15.8 C21,15.8 25,17.7 28,20.5 L28,21.7 C25,23.8 21,25 15,25 C9,25 4,23.8 4,21 Z" fill="#a89060"/>' +
+      '<path d="M28,21 L32.5,18.2 L30.3,21 L32.5,23.8 Z" fill="#a89060"/>' +
+      '<path d="M11,15.8 L9.8,10 L13.2,14.9 L14.3,9.5 L16.5,15.2 L18.2,9.8 L19.3,15.5" fill="#2b241d"/>' +
+      '<path d="M2,23.5 C7,25.8 22,25.8 28,23.5 L28,26.5 C20,27.7 9,27.7 2,26.2 Z" fill="#c9b98a" opacity="0.75"/>' +
+      '<circle cx="7" cy="19.3" r="1.4" fill="#fff"/><circle cx="7.4" cy="19.3" r="0.7" fill="#1c1b19"/>'
+    },
+    scorpionfish: { bg: '#fbecd0', shape:
+      '<path d="M4,19 C4,12.5 11,9.5 18,9.5 C25,9.5 29,14 29,19 C29,24 24,27 18,27 C11,27 4,25 4,19 Z" fill="#8a5040"/>' +
+      '<circle cx="10" cy="16" r="1.6" fill="#5c3428"/><circle cx="15.5" cy="13" r="1.4" fill="#5c3428"/><circle cx="20.5" cy="17" r="1.8" fill="#5c3428"/><circle cx="13" cy="21.5" r="1.5" fill="#5c3428"/><circle cx="21.5" cy="23" r="1.6" fill="#5c3428"/>' +
+      '<path d="M12,9.8 L10.8,6 M15.3,9.3 L14.5,5.5 M18.7,9.6 L18.2,5.8 M22,10.8 L21.6,7.3" stroke="#5c3428" stroke-width="1.2" stroke-linecap="round"/>' +
+      '<circle cx="7.7" cy="15.3" r="1.7" fill="#fff"/><circle cx="8.1" cy="15.3" r="0.85" fill="#1c1b19"/>'
+    }
   };
 
-  // Reihenfolge zaehlt: spezifischere Muster vor dem generischen Fisch-Fallback.
-  // "i"-Flag, weil z.B. "Sandgrundeln" das Stichwort "grundel" klein-mitten-im-Wort traegt.
+  // Reihenfolge zaehlt: spezifischere Muster zuerst. "i"-Flag, weil z.B.
+  // "Sandgrundeln" das Stichwort "grundel" klein-mitten-im-Wort traegt.
   var SPECIES_ICON_RULES = [
     { test: /Murän/i, icon: 'eel' },
     { test: /Plattfisch/i, icon: 'flatfish' },
@@ -2816,8 +2925,14 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     { test: /Seegurke/i, icon: 'cucumber' },
     { test: /Feuerwurm/i, icon: 'worm' },
     { test: /Qualle/i, icon: 'jellyfish' },
-    { test: /Petermännchen|Drachenkopf/i, icon: 'fishSpiky' },
-    { test: /Ährenfisch|Meeräsch|Grundel|Geißbrass|Lippfisch|Jungfisch|Meerbrass|Zackenbarsch/i, icon: 'fish' }
+    { test: /Petermännchen/i, icon: 'weever' },
+    { test: /Drachenkopf/i, icon: 'scorpionfish' },
+    { test: /Geißbrass|Meerbrass|Jungfisch/i, icon: 'seabream' },
+    { test: /Lippfisch/i, icon: 'wrasse' },
+    { test: /Meeräsch/i, icon: 'mullet' },
+    { test: /Ährenfisch/i, icon: 'sandsmelt' },
+    { test: /Grundel/i, icon: 'goby' },
+    { test: /Zackenbarsch/i, icon: 'grouper' }
   ];
 
   function speciesIconFor(text) {
@@ -2834,9 +2949,8 @@ window.PELOPONNES_BASEMAP = {"type":"FeatureCollection","properties":{"_comment"
     var cards = items.map(function (text) {
       var icon = speciesIconFor(text);
       var iconHtml = icon
-        ? '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">' +
-          '<circle cx="12" cy="12" r="12" fill="' + icon.bg + '"/>' +
-          '<g fill="' + icon.fg + '" stroke="' + icon.fg + '">' + icon.shape + '</g></svg>'
+        ? '<svg viewBox="0 0 32 32" width="44" height="44" aria-hidden="true">' +
+          '<circle cx="16" cy="16" r="16" fill="' + icon.bg + '"/>' + icon.shape + '</svg>'
         : '<span class="species-card__no-icon" aria-hidden="true"></span>';
       return '<li class="species-card">' + iconHtml + '<span>' + escapeHtml(text) + '</span></li>';
     }).join('');
