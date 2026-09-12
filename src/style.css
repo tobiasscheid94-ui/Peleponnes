@@ -1,6 +1,7 @@
 :root {
   color-scheme: light;
   --font-stack: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
   --color-bg: #f4f1ea;
   --color-surface: #ffffff;
   --color-text: #1c1b19;
@@ -298,11 +299,14 @@ html, body {
 .bottom-sheet__title-row h2 {
   flex: 1;
   margin: 0;
-  font-size: 20px;
+  font-family: var(--font-serif);
+  font-size: 22px;
 }
 .bottom-sheet__title-row .name-gr {
   display: block;
-  font-size: 13px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
   color: var(--color-text-muted);
   font-weight: 400;
 }
@@ -350,11 +354,11 @@ html, body {
   padding: 12px 16px 24px;
 }
 .bottom-sheet__body h3 {
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--color-text-muted);
-  margin: 16px 0 6px;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 18px 0 6px;
 }
 .bottom-sheet__body h3:first-child {
   margin-top: 0;
@@ -406,6 +410,37 @@ html, body {
   flex-shrink: 0;
 }
 
+/* ---------- Fakten-Zeilen (Zeitbedarf, Schwierigkeit, ...) ---------- */
+
+.fact-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 4px 0 16px;
+  padding: 12px 14px;
+  background: var(--color-bg);
+  border-radius: 12px;
+}
+.fact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.fact-row__icon {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+.fact-row__label {
+  color: var(--color-text-muted);
+}
+.fact-row__value {
+  margin-left: auto;
+  font-weight: 600;
+  border-bottom: 1px dotted var(--color-border);
+  padding-bottom: 1px;
+}
+
 /* ---------- Floating Action Buttons ---------- */
 
 .fab-stack {
@@ -442,6 +477,7 @@ html, body {
 }
 .modal-sheet h2 {
   margin-top: 0;
+  font-family: var(--font-serif);
 }
 .modal-sheet textarea {
   width: 100%;

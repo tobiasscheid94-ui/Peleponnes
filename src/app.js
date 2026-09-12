@@ -908,6 +908,34 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     return '<p><strong>' + escapeHtml(label) + ':</strong> ' + escapeHtml(value) + '</p>';
   }
 
+  // ---------- Fakten-Zeilen (Icon + Label + Wert mit gepunkteter Linie) ----------
+  // Fuer die kurzen, scanbaren Kennzahlen jedes Eintrags (Zeitbedarf,
+  // Schwierigkeit, Distanz, Schnorchel-Bewertung ...) statt sie in derselben
+  // Fliesstext-Zeile wie ausfuehrliche Beschreibungen unterzubringen.
+  var FACT_ICONS = {
+    hourglass: '<path d="M7,4 L17,4 C17,9 13,10 12,12 C13,14 17,15 17,20 L7,20 C7,15 11,14 12,12 C11,10 7,9 7,4 Z" stroke-linejoin="round"/>',
+    incline: '<path d="M4,18 L12,8 L20,18" stroke-linejoin="round" stroke-linecap="round"/><path d="M12,8 V4"/>',
+    ruler: '<path d="M4,12 H20" stroke-linecap="round" stroke-dasharray="2,3"/><path d="M4,9 V15 M20,9 V15"/>',
+    waves: '<path d="M3,10 C5,8 7,8 9,10 C11,12 13,12 15,10 C17,8 19,8 21,10" stroke-linecap="round"/><path d="M3,15 C5,13 7,13 9,15 C11,17 13,17 15,15 C17,13 19,13 21,15" stroke-linecap="round"/>',
+    people: '<circle cx="9" cy="8" r="3"/><path d="M4,19 C4,15 6.5,13 9,13 C11.5,13 14,15 14,19" stroke-linecap="round"/><circle cx="16" cy="9" r="2.4"/><path d="M13,19 C13.2,16 15,14.5 16,14.5 C18,14.5 20,16.3 20,19" stroke-linecap="round"/>'
+  };
+
+  function factRow(iconKey, label, value) {
+    if (value === null || value === undefined || value === '') return '';
+    var icon = FACT_ICONS[iconKey] || '';
+    return '<div class="fact-row">' +
+      '<svg class="fact-row__icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">' +
+      '<g fill="none" stroke="currentColor" stroke-width="1.6">' + icon + '</g></svg>' +
+      '<span class="fact-row__label">' + escapeHtml(label) + '</span>' +
+      '<span class="fact-row__value">' + escapeHtml(value) + '</span>' +
+      '</div>';
+  }
+
+  function factGrid(rows) {
+    var joined = rows.filter(Boolean).join('');
+    return joined ? '<div class="fact-grid">' + joined + '</div>' : '';
+  }
+
   function listBlock(title, items) {
     if (!items || !items.length) return '';
     return '<h3>' + escapeHtml(title) + '</h3><ul>' +
@@ -985,7 +1013,11 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
 
   function renderBeachBody(e) {
     var html = '<p>' + escapeHtml(e.summary) + '</p>';
-    html += fieldRow('Zeitbedarf', e.timeNeeded);
+    html += factGrid([
+      factRow('hourglass', 'Zeitbedarf', e.timeNeeded),
+      e.snorkeling ? factRow('waves', 'Schnorcheln', e.snorkeling.rating + '/5') : '',
+      e.crowding ? factRow('people', 'Belebtheit (Hochsaison)', e.crowding.peakSeason + '/5') : ''
+    ]);
     html += fieldRow('Untergrund', e.surface);
     html += fieldRow('Meeresboden', e.seabed);
     html += fieldRow('Einstieg', e.entry);
@@ -998,9 +1030,8 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     }
     html += listBlock('Achtung', e.hazards);
     if (e.snorkeling) {
-      html += '<h3>Schnorcheln</h3><p>Bewertung: ' + e.snorkeling.rating + '/5';
-      if (e.snorkeling.visibility) html += ' · Sicht: ' + escapeHtml(e.snorkeling.visibility);
-      html += '</p>';
+      html += '<h3>Schnorcheln</h3>';
+      if (e.snorkeling.visibility) html += '<p>Sicht: ' + escapeHtml(e.snorkeling.visibility) + '</p>';
       html += speciesListBlock('Habitat-typische Arten', e.snorkeling.speciesLikely);
       html += speciesListBlock('Vorsicht', e.snorkeling.speciesCaution);
       html += '<p class="species-note">' + escapeHtml(habitatsDisclaimer) + '</p>';
@@ -1028,6 +1059,7 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
 
   function renderSiteBody(e) {
     var html = '<p>' + escapeHtml(e.summary) + '</p>';
+    html += factGrid([factRow('hourglass', 'Zeitbedarf', e.timeNeeded)]);
     html += fieldRow('Epoche', (e.epoch || []).join(', '));
     html += fieldRow('Datierung', e.dating);
     if (e.whyItMatters) html += '<h3>Warum das zählt</h3><p>' + escapeHtml(e.whyItMatters) + '</p>';
@@ -1048,6 +1080,7 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
 
   function renderTownBody(e) {
     var html = '<p>' + escapeHtml(e.summary) + '</p>';
+    html += factGrid([factRow('hourglass', 'Zeitbedarf', e.timeNeeded)]);
     if (e.character) html += '<h3>Charakter</h3><p>' + escapeHtml(e.character) + '</p>';
     if (e.historyTimeline && e.historyTimeline.length) {
       html += '<h3>Geschichte</h3><ul>' + e.historyTimeline.map(function (h) {
@@ -1076,19 +1109,32 @@ if (typeof window.PELOPONNES_DATA === 'undefined') {
     return html;
   }
 
+  var GENERIC_FIELD_LABELS = {
+    epoch: 'Epoche', dating: 'Datierung', whyItMatters: 'Warum das zählt',
+    whatYouSee: 'Was man sieht', terrain: 'Gelände', shadeAndHeat: 'Schatten/Hitze',
+    durationHours: 'Dauer', elevationGainM: 'Höhenmeter', waymarking: 'Markierung',
+    bestTime: 'Beste Zeit', sunsetSunrise: 'Sonnenauf-/-untergang'
+  };
+
   function renderGenericBody(e) {
     var html = '<p>' + escapeHtml(e.summary) + '</p>';
-    html += fieldRow('Zeitbedarf', e.timeNeeded);
+    // Nur kurze, verlaesslich knappe Werte in die Fakten-Zeilen -- durationHours
+    // ist bei mehreren Wanderungen ein ganzer Hinweissatz (widersprechende
+    // Quellen zu Distanz/Dauer), keine kurze Kennzahl, und bleibt deshalb unten
+    // als normaler Fliesstext.
+    html += factGrid([
+      factRow('hourglass', 'Zeitbedarf', e.timeNeeded),
+      factRow('incline', 'Schwierigkeit', e.difficulty || (e.access && e.access.difficulty)),
+      factRow('ruler', 'Distanz', e.distanceKm != null ? e.distanceKm + ' km' : null)
+    ]);
     ['epoch', 'dating', 'whyItMatters', 'whatYouSee', 'terrain', 'shadeAndHeat',
-      'difficulty', 'distanceKm', 'durationHours', 'elevationGainM', 'waymarking',
-      'bestTime', 'sunsetSunrise'].forEach(function (key) {
+      'durationHours', 'elevationGainM', 'waymarking', 'bestTime', 'sunsetSunrise'].forEach(function (key) {
       var v = e[key];
       if (Array.isArray(v)) v = v.join(', ');
-      html += fieldRow(key, v);
+      html += fieldRow(GENERIC_FIELD_LABELS[key] || key, v);
     });
     if (e.access) {
       html += fieldRow('Zugang', e.access.mode);
-      html += fieldRow('Schwierigkeit', e.access.difficulty);
     }
     return html;
   }
